@@ -28,18 +28,20 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - duplicate/noise suppression
 - FEINTCON calculation
 - Discord alert payload generation without auto-send
+- FeintSignal Discord command-center routing for 36 operational channels
 - React/Vite/TypeScript dashboard shell
 - 2D globe fallback contract for later 3D globe upgrade
 - mock current affairs data
 - pytest backend test suite
 - Windows PowerShell run scripts
+- WPF desktop control panel and chromeless dashboard launcher
 - docs for architecture, scoring, Discord setup, and dashboard design
 
 ## Validation results
 
 ```text
 pytest backend/tests -q
-12 passed
+17 passed
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).
@@ -98,6 +100,16 @@ Tests:
 pytest backend/tests -q
 ```
 
+Desktop launcher:
+
+```powershell
+npm run install-launcher  # create Desktop and Start Menu shortcuts
+npm run app               # open the WPF control panel
+npm run terminal          # open the dashboard as a desktop app window
+```
+
+Discord setup is documented in [docs/DISCORD_SETUP.md](docs/DISCORD_SETUP.md). The exact APIs and credentials to obtain now versus later are listed in [docs/API_REQUIREMENTS.md](docs/API_REQUIREMENTS.md). All real values belong only in local `.env`.
+
 ## Project layout
 
 ```
@@ -107,7 +119,8 @@ frontend/  React + Vite + TypeScript tactical dashboard (2D SignalGlobe + 3D-rea
 config/    topics, regions, scoring rules, source taxonomy, channels, watchlists, UI
 data/      mock_events.json, mock_sources.json (the SQLite DB is generated, not tracked)
 scripts/   PowerShell run scripts + seed/hourly Python entry points
-docs/      ARCHITECTURE, INTELLIGENCE_DOCTRINE, SCORING_MODEL, DISCORD_SETUP, DASHBOARD_DESIGN, ROADMAP
+launcher/  WPF control panel, dashboard app-window launcher, icon, and shortcut installer
+docs/      architecture, doctrine, scoring, Discord/API setup, dashboard design, and roadmap
 ```
 
 ## Next engineering steps

@@ -105,5 +105,5 @@ class RunNowRequest(BaseModel):
 
 
 class DiscordTestRequest(BaseModel):
-    channel: str = Field("system_status", description="heartbeat | breaking | daily_briefing | system_status")
+    channel: str = Field("system_status", description="A configured Discord route ID or fs-* channel name.")
     dry_run: bool = True

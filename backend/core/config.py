@@ -70,18 +70,20 @@ class Settings:
 
     def webhook_configured(self, channel: str) -> bool:
         """Return whether a webhook env var is set, WITHOUT revealing the value."""
-        key = {
-            "heartbeat": "DISCORD_WEBHOOK_HEARTBEAT",
-            "breaking": "DISCORD_WEBHOOK_BREAKING",
-            "daily_briefing": "DISCORD_WEBHOOK_DAILY_BRIEFING",
-            "system_status": "DISCORD_WEBHOOK_SYSTEM_STATUS",
-        }.get(channel)
+        from .discord_routing import resolve_channel
+
+        try:
+            key = resolve_channel(channel).get("env_var")
+        except ValueError:
+            return False
         if not key:
             return False
         return bool(os.getenv(key, "").strip())
 
     def configured_webhook_channels(self) -> List[str]:
-        return [c for c in ("heartbeat", "breaking", "daily_briefing", "system_status") if self.webhook_configured(c)]
+        from .discord_routing import webhook_channels
+
+        return [item["id"] for item in webhook_channels() if self.webhook_configured(item["id"])]
 
     def safe_summary(self) -> Dict[str, object]:
         """Non-sensitive view of config for the API/UI. No secrets, no URLs."""

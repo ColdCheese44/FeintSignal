@@ -1,11 +1,63 @@
 {
-  "_note": "Logical Discord channel mapping. Webhook URLs are NEVER stored here; they live only in environment variables and are referenced by env_var name.",
-  "channels": [
-    {"id": "heartbeat", "label": "System Heartbeat", "env_var": "DISCORD_WEBHOOK_HEARTBEAT", "purpose": "Periodic liveness pings."},
-    {"id": "breaking", "label": "Breaking Signals", "env_var": "DISCORD_WEBHOOK_BREAKING", "purpose": "Standard/critical alert payloads (human-review gated)."},
-    {"id": "daily_briefing", "label": "Daily Briefing", "env_var": "DISCORD_WEBHOOK_DAILY_BRIEFING", "purpose": "Once-daily situation summary."},
-    {"id": "system_status", "label": "System Status", "env_var": "DISCORD_WEBHOOK_SYSTEM_STATUS", "purpose": "Config / gate / error status."}
-  ],
+  "schema_version": 1,
+  "_note": "Discord command-center routing. Store real IDs and webhook URLs only in .env; never put secrets in this file.",
   "send_enabled_env_var": "ENABLE_DISCORD_SEND",
-  "default_send_enabled": false
+  "server_id_env_var": "DISCORD_SERVER_ID",
+  "default_send_enabled": false,
+  "routes": {
+    "heartbeat": "heartbeat",
+    "system_status": "system_status",
+    "agent_runs": "agent_runs",
+    "errors": "errors",
+    "cost_control": "cost_control",
+    "breaking": "breaking",
+    "critical": "critical",
+    "human_review": "human_review",
+    "daily_briefing": "daily_briefing",
+    "sitrep": "sitrep"
+  },
+  "channels": [
+    {"id":"command_post","category":"FEINTSIGNAL COMMAND","channel_name":"fs-command-post","purpose":"Operator commands and future bot interactions.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_COMMAND_POST","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"human_review","category":"FEINTSIGNAL COMMAND","channel_name":"fs-human-review","purpose":"Sensitive claims and critical alerts awaiting operator review.","webhook_recommended":true,"bot_channel_id_recommended":true,"env_var":"DISCORD_WEBHOOK_HUMAN_REVIEW","channel_id_env_var":"DISCORD_CHANNEL_HUMAN_REVIEW","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"watchlist","category":"FEINTSIGNAL COMMAND","channel_name":"fs-watchlist","purpose":"Operator-maintained priority topics, entities, and regions.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_WATCHLIST","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"operator_notes","category":"FEINTSIGNAL COMMAND","channel_name":"fs-operator-notes","purpose":"Human context, decisions, and handoff notes.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_OPERATOR_NOTES","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+
+    {"id":"heartbeat","category":"FEINTSIGNAL OPS","channel_name":"fs-heartbeat-log","purpose":"Periodic liveness and pipeline heartbeat summaries.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_HEARTBEAT","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"system_status","category":"FEINTSIGNAL OPS","channel_name":"fs-system-status","purpose":"Service, capability-gate, and readiness status.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_SYSTEM_STATUS","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"agent_runs","category":"FEINTSIGNAL OPS","channel_name":"fs-agent-runs","purpose":"Agent and pipeline run completion summaries.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_AGENT_RUNS","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"errors","category":"FEINTSIGNAL OPS","channel_name":"fs-error-log","purpose":"Operational failures requiring attention.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_ERRORS","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"cost_control","category":"FEINTSIGNAL OPS","channel_name":"fs-cost-control","purpose":"Budget, quota, and provider cost warnings.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_COST_CONTROL","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+
+    {"id":"breaking","category":"FEINTSIGNAL ALERTS","channel_name":"fs-breaking-alerts","purpose":"Standard high-signal alerts eligible for outbound posting.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_BREAKING","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"critical","category":"FEINTSIGNAL ALERTS","channel_name":"fs-critical-alerts","purpose":"Critical corroborated alerts that pass review policy.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_CRITICAL","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"monitoring","category":"FEINTSIGNAL ALERTS","channel_name":"fs-monitoring","purpose":"Developing signals below alert thresholds.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_MONITORING","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"escalated","category":"FEINTSIGNAL ALERTS","channel_name":"fs-escalated","purpose":"Operator-escalated cases and follow-up tracking.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_ESCALATED","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+
+    {"id":"daily_briefing","category":"FEINTSIGNAL INTEL","channel_name":"fs-daily-brief","purpose":"Daily intelligence briefing.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_DAILY_BRIEF","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"sitrep","category":"FEINTSIGNAL INTEL","channel_name":"fs-sitrep","purpose":"On-demand situation reports.","webhook_recommended":true,"bot_channel_id_recommended":false,"env_var":"DISCORD_WEBHOOK_SITREP","channel_id_env_var":null,"placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"source_review","category":"FEINTSIGNAL INTEL","channel_name":"fs-source-review","purpose":"Source quality, corroboration, and provenance review.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_SOURCE_REVIEW","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"bias_framing","category":"FEINTSIGNAL INTEL","channel_name":"fs-bias-framing","purpose":"Framing and viewpoint analysis.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_BIAS_FRAMING","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"research_queue","category":"FEINTSIGNAL INTEL","channel_name":"fs-research-queue","purpose":"Items queued for deeper research.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_RESEARCH_QUEUE","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+
+    {"id":"region_global","category":"FEINTSIGNAL REGIONS","channel_name":"fs-global","purpose":"Global and cross-region intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_GLOBAL","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"region_north_america","category":"FEINTSIGNAL REGIONS","channel_name":"fs-north-america","purpose":"North America intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_NORTH_AMERICA","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"region_latin_america","category":"FEINTSIGNAL REGIONS","channel_name":"fs-latin-america","purpose":"Latin America intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_LATIN_AMERICA","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"region_europe","category":"FEINTSIGNAL REGIONS","channel_name":"fs-europe","purpose":"Europe intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_EUROPE","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"region_middle_east","category":"FEINTSIGNAL REGIONS","channel_name":"fs-middle-east","purpose":"Middle East intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_MIDDLE_EAST","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"region_africa","category":"FEINTSIGNAL REGIONS","channel_name":"fs-africa","purpose":"Africa intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_AFRICA","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"region_asia_pacific","category":"FEINTSIGNAL REGIONS","channel_name":"fs-asia-pacific","purpose":"Asia-Pacific intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_ASIA_PACIFIC","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+
+    {"id":"domain_cyber","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-cyber","purpose":"Cyber incidents and security intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_CYBER","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_conflict","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-conflict","purpose":"Conflict and military developments.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_CONFLICT","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_politics","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-politics","purpose":"Political and governance developments.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_POLITICS","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_economy","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-economy","purpose":"Macroeconomic and market-moving developments.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_ECONOMY","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_energy_supplychain","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-energy-supplychain","purpose":"Energy and supply-chain disruption intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_ENERGY_SUPPLYCHAIN","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_disasters_health","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-disasters-health","purpose":"Natural disasters and public-health developments.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_DISASTERS_HEALTH","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_crime_cartels","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-crime-cartels","purpose":"Organized crime and cartel intelligence.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_CRIME_CARTELS","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"domain_tech_ai","category":"FEINTSIGNAL DOMAINS","channel_name":"fs-tech-ai","purpose":"Technology and artificial-intelligence developments.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_TECH_AI","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+
+    {"id":"bot_errors","category":"FEINTSIGNAL DEV/BOT","channel_name":"fs-bot-errors","purpose":"Future Discord bot failures.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_BOT_ERRORS","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"raw_logs","category":"FEINTSIGNAL DEV/BOT","channel_name":"fs-raw-logs","purpose":"Restricted raw diagnostic output.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_RAW_LOGS","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"dev_notes","category":"FEINTSIGNAL DEV/BOT","channel_name":"fs-dev-notes","purpose":"Development notes and implementation handoffs.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_DEV_NOTES","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false}
+  ]
 }
