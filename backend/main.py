@@ -67,6 +67,17 @@ def _startup() -> None:
             logger.info("Startup pipeline seeded mock data.")
         except Exception as exc:  # pragma: no cover - defensive
             logger.warning("Startup seeding skipped: %s", exc)
+    if settings.enable_scheduler:
+        from .services.scheduler_service import scheduler
+
+        scheduler.start(interval_minutes=settings.update_interval_minutes)
+
+
+@app.on_event("shutdown")
+def _shutdown() -> None:
+    from .services.scheduler_service import scheduler
+
+    scheduler.stop()
 
 
 @app.get("/")

@@ -39,8 +39,10 @@ def _critical_event(category: str = "politics") -> dict:
 def test_config_loads_all_command_center_channels():
     loaded = load_discord_config()
     channels = loaded["channels"]
-    assert len(channels) == 36
-    assert len({item["channel_name"] for item in channels}) == 36
+    assert len(channels) == 37
+    assert len({item["channel_name"] for item in channels}) == 37
+    assert all(item["channel_id_env_var"] for item in channels)
+    assert len({item["channel_id_env_var"] for item in channels}) == 37
     assert all(item["enabled_by_default"] is False for item in channels)
     assert route_channel("heartbeat")["channel_name"] == "fs-heartbeat-log"
 

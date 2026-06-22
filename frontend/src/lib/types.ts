@@ -132,16 +132,45 @@ export interface Briefing {
   top_signals: TopSignal[];
   events_by_region: Record<string, number>;
   human_review_queue: { id: string; title: string }[];
+  perspective_analysis: PerspectiveAnalysis[];
+  intelligence_method: string;
   disclaimer: string;
+}
+
+export interface PerspectiveAnalysis {
+  event_id: string;
+  title: string;
+  neutral_assessment: string;
+  what_the_left_says: string;
+  what_the_center_says: string;
+  what_the_right_says: string;
+  consensus: string;
+  uncertainties: string[];
+  source_balance: Record<string, number>;
+  method: string;
+}
+
+export interface DiscordChannelStatus {
+  channel_name: string;
+  webhook_configured: boolean;
 }
 
 export interface DiscordStatus {
   enable_discord_send: boolean;
-  channels: Record<string, boolean>;
+  channels: Record<string, DiscordChannelStatus>;
   pending_alerts: {
     event_id: string;
     alert_level: string;
     requires_human_review: boolean;
     sent: boolean;
   }[];
+}
+
+export interface SchedulerStatus {
+  scheduler_enabled: boolean;
+  scheduler_interval_minutes: number;
+  scheduler_running_now: boolean;
+  scheduler_last_started_at: string | null;
+  scheduler_next_run_at: string | null;
+  scheduler_last_status: ({ ok: boolean; status?: string; reason?: string; error?: string } & Partial<AgentRun>) | null;
 }

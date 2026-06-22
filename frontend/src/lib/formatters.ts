@@ -26,15 +26,18 @@ export function feintconColor(level: number): string {
 }
 
 export function relativeTime(iso?: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return "—";
-  const mins = Math.round((Date.now() - then) / 60000);
+  if (Number.isNaN(then)) return "-";
+  const deltaMinutes = Math.round((then - Date.now()) / 60000);
+  const future = deltaMinutes > 0;
+  const mins = Math.abs(deltaMinutes);
   if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return future ? `in ${mins}m` : `${mins}m ago`;
   const hrs = Math.round(mins / 60);
-  if (hrs < 48) return `${hrs}h ago`;
-  return `${Math.round(hrs / 24)}d ago`;
+  if (hrs < 48) return future ? `in ${hrs}h` : `${hrs}h ago`;
+  const days = Math.round(hrs / 24);
+  return future ? `in ${days}d` : `${days}d ago`;
 }
 
 export function titleCase(s: string): string {

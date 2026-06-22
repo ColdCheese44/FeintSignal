@@ -1,11 +1,10 @@
 """Agent run endpoints."""
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
-from ..agents import orchestrator
 from ..core.schemas import RunNowRequest
-from ..services import event_service
+from ..services import event_service, scheduler_service
 
 router = APIRouter(tags=["agents"])
 
@@ -19,7 +18,11 @@ def get_runs(limit: int = 25):
 @router.post("/agents/run-now")
 def run_now(body: RunNowRequest | None = None):
     trigger = body.reason if body else "manual"
-    result = orchestrator.run_pipeline(trigger=trigger)
+    try:
+        result = scheduler_service.scheduler.run_once(trigger=trigger)
+    except scheduler_service.SchedulerBusyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    from ..agents import orchestrator
     return {
         "ok": True,
         "summary": orchestrator.summarize(result),

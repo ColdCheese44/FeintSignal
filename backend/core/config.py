@@ -60,6 +60,7 @@ class Settings:
     )
 
     update_interval_minutes: int = field(default_factory=lambda: _as_int(os.getenv("UPDATE_INTERVAL_MINUTES"), 60))
+    enable_scheduler: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_SCHEDULER"), False))
     max_events_per_run: int = field(default_factory=lambda: _as_int(os.getenv("MAX_EVENTS_PER_RUN"), 50))
     log_level: str = field(default_factory=lambda: os.getenv("LOG_LEVEL", "INFO"))
 
@@ -97,6 +98,7 @@ class Settings:
             "enable_discord_send": self.enable_discord_send,
             "require_human_review_for_critical": self.require_human_review_for_critical,
             "update_interval_minutes": self.update_interval_minutes,
+            "enable_scheduler": self.enable_scheduler,
             "max_events_per_run": self.max_events_per_run,
             "log_level": self.log_level,
             "discord_webhooks_configured": self.configured_webhook_channels(),

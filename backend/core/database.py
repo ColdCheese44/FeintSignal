@@ -76,6 +76,12 @@ CREATE TABLE IF NOT EXISTS alerts (
     sent          INTEGER DEFAULT 0,
     payload       TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS system_state (
+    key           TEXT PRIMARY KEY,
+    value         TEXT NOT NULL,
+    updated_at    TEXT NOT NULL
+);
 """
 
 
@@ -102,7 +108,7 @@ def reset_db(db_path: Optional[Path] = None) -> None:
     conn = get_connection(db_path)
     try:
         conn.executescript(SCHEMA)
-        for table in ("alerts", "briefings", "agent_runs", "notes", "events"):
+        for table in ("alerts", "briefings", "agent_runs", "notes", "events", "system_state"):
             conn.execute(f"DELETE FROM {table};")
         conn.commit()
     finally:

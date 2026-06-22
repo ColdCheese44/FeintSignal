@@ -53,6 +53,104 @@ def build_test_payload(channel: str = "system_status") -> Dict[str, object]:
     }
 
 
+def _embed_payload(route: str, title: str, description: str, fields: list[dict], color: int) -> Dict[str, object]:
+    target = route_channel(route)
+    return {
+        "route": target["id"],
+        "channel": target["channel_name"],
+        "username": "FeintSignal",
+        "embeds": [{
+            "title": title[:256],
+            "description": description[:4096],
+            "color": color,
+            "fields": fields[:25],
+            "footer": {"text": DISCLAIMER},
+        }],
+    }
+
+
+def build_heartbeat_payload(run: dict, feintcon: dict) -> Dict[str, object]:
+    return _embed_payload(
+        "heartbeat",
+        "FeintSignal Heartbeat",
+        "The local intelligence pipeline completed its scheduled posture check.",
+        [
+            {"name": "Events", "value": str(run.get("events_processed", 0)), "inline": True},
+            {"name": "Alerts", "value": str(run.get("alerts_generated", 0)), "inline": True},
+            {"name": "FEINTCON", "value": str(feintcon.get("level", "-")), "inline": True},
+        ],
+        0x2E7D32,
+    )
+
+
+def build_agent_run_payload(run: dict) -> Dict[str, object]:
+    return _embed_payload(
+        "agent_runs",
+        "Agent Run Complete",
+        f"Trigger: {run.get('trigger', 'unknown')}",
+        [
+            {"name": "Status", "value": str(run.get("status", "unknown")), "inline": True},
+            {"name": "Processed", "value": str(run.get("events_processed", 0)), "inline": True},
+            {"name": "Duplicates", "value": str(run.get("duplicates", 0)), "inline": True},
+        ],
+        0x3A6EA5,
+    )
+
+
+def build_daily_briefing_payload(briefing: dict) -> Dict[str, object]:
+    top = briefing.get("top_signals") or []
+    lines = [f"{index + 1}. {item.get('title')} [{float(item.get('signal_score', 0)):.0f}]" for index, item in enumerate(top[:5])]
+    return _embed_payload(
+        "daily_briefing",
+        f"Daily Intelligence Brief | {briefing.get('briefing_date', '')}",
+        str(briefing.get("summary", "")),
+        [
+            {"name": "Top signals", "value": "\n".join(lines)[:1024] or "No active signals.", "inline": False},
+            {"name": "Review queue", "value": str(len(briefing.get("human_review_queue") or [])), "inline": True},
+        ],
+        0x4F9FE0,
+    )
+
+
+def build_error_payload(error_name: str, context: str) -> Dict[str, object]:
+    return _embed_payload(
+        "errors",
+        "FeintSignal Operational Error",
+        f"{context}: {error_name}",
+        [],
+        0xE5484D,
+    )
+
+
+def dispatch_pipeline(alerts: list[dict], briefing: dict, run: dict, feintcon: dict) -> Dict[str, object]:
+    """Dispatch pipeline outputs through mandatory global and per-route gates."""
+    alert_results = []
+    for alert in alerts:
+        result = send(alert["payload"], channel=str(alert.get("route") or "breaking"))
+        alert["sent"] = bool(result.get("sent"))
+        alert["delivery"] = result
+        alert_results.append(result)
+
+    operational = {
+        "heartbeat": send(build_heartbeat_payload(run, feintcon), channel="heartbeat"),
+        "agent_run": send(build_agent_run_payload(run), channel="agent_runs"),
+    }
+
+    daily_result: Dict[str, object] = {"sent": False, "reason": "already_sent_today", "channel": "fs-daily-brief"}
+    try:
+        from . import event_service
+
+        briefing_date = str(briefing.get("briefing_date", ""))
+        if event_service.get_system_state("discord_daily_brief_date") != briefing_date:
+            daily_result = send(build_daily_briefing_payload(briefing), channel="daily_briefing")
+            if daily_result.get("sent"):
+                event_service.set_system_state("discord_daily_brief_date", briefing_date)
+    except Exception as exc:
+        daily_result = {"sent": False, "reason": "state_error", "error": type(exc).__name__, "channel": "fs-daily-brief"}
+
+    return {"alerts": alert_results, **operational, "daily_briefing": daily_result}
+
+
 def send(payload: Dict[str, object], channel: str = "breaking") -> Dict[str, object]:
     """Attempt delivery without ever returning or logging webhook values."""
     settings = get_settings()

@@ -19,12 +19,12 @@ export function BiasPanel({ event }: { event: FeintEvent }) {
         <div style={{ marginTop: 8 }}>
           {framing.left_frame && (
             <p style={{ margin: "4px 0", fontSize: 12.5 }}>
-              <strong className="muted">Left frame:</strong> {framing.left_frame}
+              <strong className="muted">What the Left says:</strong> {framing.left_frame}
             </p>
           )}
           {framing.right_frame && (
             <p style={{ margin: "4px 0", fontSize: 12.5 }}>
-              <strong className="muted">Right frame:</strong> {framing.right_frame}
+              <strong className="muted">What the Right says:</strong> {framing.right_frame}
             </p>
           )}
           {framing.contested_terms && framing.contested_terms.length > 0 && (

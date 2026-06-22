@@ -88,7 +88,7 @@ def persist_run(
                     alert.get("alert_level"),
                     alert.get("channel"),
                     1 if alert.get("requires_human_review") else 0,
-                    0,
+                    1 if alert.get("sent") else 0,
                     json.dumps(alert.get("payload", {})),
                 ),
             )
@@ -239,5 +239,29 @@ def list_alerts() -> List[dict]:
             rec["payload"] = json.loads(rec["payload"])
             out.append(rec)
         return out
+    finally:
+        conn.close()
+
+
+def get_system_state(key: str, default=None):
+    conn = database.get_connection()
+    try:
+        conn.executescript(database.SCHEMA)
+        row = conn.execute("SELECT value FROM system_state WHERE key = ?", (key,)).fetchone()
+        return json.loads(row["value"]) if row else default
+    finally:
+        conn.close()
+
+
+def set_system_state(key: str, value) -> None:
+    conn = database.get_connection()
+    try:
+        conn.executescript(database.SCHEMA)
+        conn.execute(
+            """INSERT INTO system_state (key, value, updated_at) VALUES (?, ?, ?)
+               ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at""",
+            (key, json.dumps(value), now_iso()),
+        )
+        conn.commit()
     finally:
         conn.close()

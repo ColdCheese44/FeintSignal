@@ -27,10 +27,13 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - source validation
 - duplicate/noise suppression
 - FEINTCON calculation
-- Discord alert payload generation without auto-send
-- FeintSignal Discord command-center routing for 36 operational channels
+- Discord alert payload generation with default-off delivery
+- FeintSignal Discord command-center routing for 37 operational channels
+- gated Discord dispatch for alerts, heartbeats, agent runs, errors, and once-daily briefings
 - React/Vite/TypeScript dashboard shell
-- 2D globe fallback contract for later 3D globe upgrade
+- offline-capable interactive 3D globe with country geometry, markers, rings, and correlation arcs
+- neutral perspective dossiers with left, center, right, consensus, and uncertainty sections
+- supervised hourly scheduler with overlap protection and dashboard controls
 - mock current affairs data
 - pytest backend test suite
 - Windows PowerShell run scripts
@@ -41,7 +44,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 
 ```text
 pytest backend/tests -q
-17 passed
+23 passed
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).
@@ -125,6 +128,4 @@ docs/      architecture, doctrine, scoring, Discord/API setup, dashboard design,
 
 ## Next engineering steps
 
-See [docs/ROADMAP.md](docs/ROADMAP.md): hourly scheduler hardening, dashboard-visible
-agent run history, 3D globe upgrade, RSS/live ingestion behind `ENABLE_LIVE_RESEARCH=false`,
-and frontend smoke tests.
+See [docs/SITUATION_ROOM_DOCTRINE.md](docs/SITUATION_ROOM_DOCTRINE.md) for the operating model and [docs/ROADMAP.md](docs/ROADMAP.md) for live-source ingestion, LLM adapters, frontend tests, and audit workflow work.

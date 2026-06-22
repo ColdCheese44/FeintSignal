@@ -1,37 +1,28 @@
 # FeintSignal Roadmap
 
-The MVP is a complete, validated, local-first scaffold. The items below are the
-prioritised next steps, each kept behind a safety gate where relevant.
+## Completed operational foundations
 
-## 1. True hourly scheduler hardening
-`services/scheduler_service.py` is a simple `threading.Timer` loop, OFF by
-default. Harden it: process supervision, overlap protection, jittered backoff,
-persisted last-run state, and a clean start/stop API surfaced in the UI. Pair
-with `scripts/hourly_update.py` + Windows Task Scheduler for an out-of-process
-option.
+- Supervised in-process hourly scheduler with controls, overlap protection, and persisted status snapshots.
+- Windows Task Scheduler option for out-of-process hourly operation.
+- Offline-capable 3D globe with category filters, dossiers, alert rings, and correlation arcs.
+- Deterministic perspective analysis with neutral, left, center, right, consensus, and uncertainty sections.
+- Discord command-center routing and gated dispatch for alerts, operations, errors, and daily briefings.
+- Full-screen desktop launcher and chromeless dashboard window.
 
-## 2. Dashboard-visible agent run history refresh
-The bottom drawer shows run counts and heartbeat; surface the full
-`/agents/runs` history (timeline, per-run deltas, alert counts) with live refresh
-and a manual "refresh now" affordance distinct from "run now".
+Do not run both hourly supervision modes at once. Use the dashboard scheduler while the backend remains open, or install the Windows scheduled updater for machine-level supervision.
 
-## 3. 3D globe upgrade
-Replace the 2D `SignalGlobe` with a three.js / react-globe.gl implementation
-behind the **same `{events, onSelect, selectedId}` contract**. Add arcs for
-cross-region linkage and a day/night terminator.
+## Next priorities
 
-## 4. RSS / live source ingestion (behind `ENABLE_LIVE_RESEARCH=false`)
-Implement a real collector for RSS/Atom and selected APIs. Must stay OFF by
-default, respect robots/rate limits, normalise into the existing event schema,
-and never bypass source validation or human-review gates.
+1. RSS and live-source ingestion behind `ENABLE_LIVE_RESEARCH=false`, with allowlists, rate limits, and provenance capture.
+2. An LLM provider adapter behind `ENABLE_LLM=false`, requiring citations to collected evidence and preserving deterministic fallback output.
+3. Frontend automated tests for filters, dossiers, scheduler controls, and Discord dry runs.
+4. Human-review approval and acknowledgement with operator identity and audit history.
+5. Agent-run timeline with per-agent duration, retry state, and failure detail.
+6. Markdown/PDF briefing export and a configurable daily delivery time.
 
-## 5. Frontend smoke tests
-Add Vitest + React Testing Library coverage for the API client, formatters, and
-key components (EventCard flags, ScorePanel math, SignalGlobe projection), plus a
-Playwright happy-path against a seeded backend.
+## Guardrails
 
-## Further out
-- Optional LLM summarisation of briefings behind `ENABLE_LLM=false`.
-- Per-watchlist relevance boosting (config already present in `watchlists.json`).
-- Alert acknowledgement / approval workflow with audit trail.
-- Export (PDF/Markdown) of the daily briefing.
+- FEINTCON remains internal and never represents official DEFCON.
+- Correlation arcs never imply coordination or causation.
+- Live research, LLM calls, and Discord sending remain off by default.
+- Sensitive or critical claims remain review-gated.

@@ -7,6 +7,7 @@ import type {
   FeintconStatus,
   Heartbeat,
   AgentRun,
+  SchedulerStatus,
 } from "./types";
 
 const API_BASE =
@@ -54,4 +55,11 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ channel, dry_run: true }),
     }),
+  schedulerStatus: () => request<SchedulerStatus>("/system/scheduler"),
+  schedulerStart: (intervalMinutes = 60, runImmediately = false) =>
+    request<SchedulerStatus>("/system/scheduler/start", {
+      method: "POST",
+      body: JSON.stringify({ interval_minutes: intervalMinutes, run_immediately: runImmediately }),
+    }),
+  schedulerStop: () => request<SchedulerStatus>("/system/scheduler/stop", { method: "POST" }),
 };

@@ -104,6 +104,11 @@ class RunNowRequest(BaseModel):
     reason: str = "manual"
 
 
+class SchedulerStartRequest(BaseModel):
+    interval_minutes: Optional[int] = Field(None, ge=1, le=1440)
+    run_immediately: bool = False
+
+
 class DiscordTestRequest(BaseModel):
     channel: str = Field("system_status", description="A configured Discord route ID or fs-* channel name.")
     dry_run: bool = True

@@ -14,6 +14,7 @@ AGENTS: List[str] = [
     "signal_scorer",
     "feintcon_agent",
     "alert_router",
+    "perspective_agent",
     "briefing_agent",
     "heartbeat_agent",
 ]

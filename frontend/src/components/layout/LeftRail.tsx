@@ -4,9 +4,11 @@ interface Props {
   events: FeintEvent[];
   regionFilter: string | null;
   onRegionFilter: (region: string | null) => void;
+  categoryFilter: string | null;
+  onCategoryFilter: (category: string | null) => void;
 }
 
-export function LeftRail({ events, regionFilter, onRegionFilter }: Props) {
+export function LeftRail({ events, regionFilter, onRegionFilter, categoryFilter, onCategoryFilter }: Props) {
   const byRegion = new Map<string, number>();
   const byCategory = new Map<string, number>();
   for (const e of events) {
@@ -56,7 +58,11 @@ export function LeftRail({ events, regionFilter, onRegionFilter }: Props) {
       <div className="rail-section">
         <h3>Categories</h3>
         {[...byCategory.entries()].sort((a, b) => b[1] - a[1]).map(([cat, count]) => (
-          <div key={cat} className="rail-item">
+          <div
+            key={cat}
+            className={`rail-item ${categoryFilter === cat ? "active" : ""}`}
+            onClick={() => onCategoryFilter(categoryFilter === cat ? null : cat)}
+          >
             <span>{cat}</span>
             <span className="count">{count}</span>
           </div>

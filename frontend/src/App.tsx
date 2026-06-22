@@ -7,6 +7,7 @@ import type {
   FeintEvent,
   FeintconStatus,
   Heartbeat,
+  SchedulerStatus,
 } from "./lib/types";
 import { TopStatusBar } from "./components/layout/TopStatusBar";
 import { LeftRail } from "./components/layout/LeftRail";
@@ -21,8 +22,10 @@ export default function App() {
   const [briefing, setBriefing] = useState<Briefing | null>(null);
   const [runs, setRuns] = useState<AgentRun[]>([]);
   const [discord, setDiscord] = useState<DiscordStatus | null>(null);
+  const [scheduler, setScheduler] = useState<SchedulerStatus | null>(null);
 
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [selected, setSelected] = useState<FeintEvent | null>(null);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,18 +33,20 @@ export default function App() {
 
   const refresh = useCallback(async () => {
     try {
-      const [ev, fc, hb, rn, dc] = await Promise.all([
+      const [ev, fc, hb, rn, dc, sc] = await Promise.all([
         api.events(),
         api.feintcon(),
         api.heartbeat(),
         api.runs(),
         api.discordStatus(),
+        api.schedulerStatus(),
       ]);
       setEvents(ev.events);
       setFeintcon(fc);
       setHeartbeat(hb);
       setRuns(rn.runs);
       setDiscord(dc);
+      setScheduler(sc);
       try {
         setBriefing(await api.latestBriefing());
       } catch {
@@ -81,7 +86,26 @@ export default function App() {
     }
   }
 
-  const filtered = regionFilter ? events.filter((e) => e.region === regionFilter) : events;
+  async function setSchedulerEnabled(enabled: boolean) {
+    try {
+      setScheduler(enabled ? await api.schedulerStart(60) : await api.schedulerStop());
+      await refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Scheduler control failed");
+    }
+  }
+
+  async function testDiscord(channel: string) {
+    try {
+      await api.discordTest(channel);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Discord dry run failed");
+      throw e;
+    }
+  }
+
+  const filtered = events.filter((e) => (regionFilter ? e.region === regionFilter : true));
 
   if (loading) {
     return <div className="loading">Connecting to FeintSignal backend at {api.base}…</div>;
@@ -98,7 +122,13 @@ export default function App() {
       )}
 
       <div className="app-body">
-        <LeftRail events={events} regionFilter={regionFilter} onRegionFilter={setRegionFilter} />
+        <LeftRail
+          events={events}
+          regionFilter={regionFilter}
+          onRegionFilter={setRegionFilter}
+          categoryFilter={categoryFilter}
+          onCategoryFilter={setCategoryFilter}
+        />
         <MainDashboard
           events={filtered}
           feintcon={feintcon}
@@ -106,10 +136,19 @@ export default function App() {
           selectedId={selected?.id ?? null}
           onSelect={(e) => openById(e.id)}
           onSelectId={openById}
+          categoryFilter={categoryFilter}
+          onCategoryFilter={setCategoryFilter}
         />
       </div>
 
-      <BottomToolDrawer heartbeat={heartbeat} runs={runs} discord={discord} />
+      <BottomToolDrawer
+        heartbeat={heartbeat}
+        runs={runs}
+        discord={discord}
+        scheduler={scheduler}
+        onSchedulerEnabled={setSchedulerEnabled}
+        onDiscordTest={testDiscord}
+      />
 
       {selected && (
         <EventDialog

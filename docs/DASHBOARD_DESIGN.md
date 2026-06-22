@@ -1,59 +1,43 @@
 # Dashboard Design
 
-A full-screen, dark, tactical SOC/intelligence layout. Functional MVP first —
-styling is intentionally restrained so progress is measured in working features,
-not pixel polish.
+FeintSignal is a full-screen intelligence Situation Room intended for a dedicated monitor.
 
 ## Layout
 
-```
-┌──────────────────────────── TopStatusBar ────────────────────────────┐
-│ Brand · FEINTCON chip · gate pills (live/llm/discord/review) · Run    │
-├──────────┬────────────────────────────────────────────────────────────┤
-│ LeftRail │  MainDashboard                                              │
-│  feed    │   ┌── Signal Map (2D globe) ──┐  ┌── Daily Briefing ──┐     │
-│  regions │   │ equirectangular markers   │  │ headline + top     │     │
-│  cats    │   └───────────────────────────┘  │ signals + review   │     │
-│          │   ┌── Event Feed ─────────────┐  └────────────────────┘     │
-│          │   │ EventCards (click → modal)│  ┌── Readiness detail ─┐    │
-│          │   └───────────────────────────┘  └─────────────────────┘    │
-├──────────┴────────────────────────────────────────────────────────────┤
-│ BottomToolDrawer:  Agents │ Heartbeat │ Cost Controls │ Discord        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+- **Top status bar**: product identity, FEINTCON, capability gates, and manual pipeline control.
+- **Left rail**: regions, categories, review queue, and suppressed-duplicate counts.
+- **Central theater**: a standalone 3D globe with no scroll container.
+- **Right intelligence column**: event feed, daily briefing, perspective analysis, and readiness detail. This column scrolls independently.
+- **Bottom tool drawer**: agents, heartbeat, cost gates, hourly supervisor, and Discord command-center status.
+- **Event dossier**: an in-app dialog with scoring, sources, political framing, operator status, and notes.
 
-The **EventDialog** modal shows the full ScorePanel (component bars +
-explanation), BiasPanel (framing/leans), SourcePanel, and operator controls
-(status buttons + analyst notes).
+## 3D signal theater
 
-## Globe: 2D now, 3D later
-
-`SignalGlobe.tsx` is a 2D equirectangular SVG fallback. It defines the data
-contract a future 3D globe will consume:
+`SignalGlobe.tsx` uses `react-globe.gl` and bundled Natural Earth country geometry, so it does not depend on remote map tiles. The globe is lazy-loaded behind the stable event contract:
 
 ```ts
 interface GlobeProps {
-  events: FeintEvent[];          // markers come from lat/lon
-  onSelect: (e: FeintEvent) => void;
+  events: FeintEvent[];
+  onSelect: (event: FeintEvent) => void;
   selectedId?: string | null;
+  showCorrelations?: boolean;
 }
 ```
 
-To upgrade to 3D (e.g. `react-globe.gl` / three.js), implement a new component
-with the **same props** and swap it in `MainDashboard.tsx`. No other code needs
-to change — markers, selection, and filtering already flow through this contract.
+Markers are sized by signal score and colored by alert posture. Alerting events pulse with rings. Category filters affect both the globe and event feed. Optional arcs connect same-category events across different regions; they are analytical correlations and never claims of causation.
 
-Markers are sized by `signal_score` and coloured by alert level (falling back to
-signal band). Alerting events get a soft halo.
+## Perspective reporting
+
+The daily briefing provides neutral assessment, what the left says, what the center says, what the right says, consensus, and explicit uncertainties. Missing viewpoints are labeled missing rather than invented. While `ENABLE_LLM=false`, this is deterministic synthesis from supplied event framing and source metadata.
+
+## Responsive behavior
+
+The desktop layout prioritizes a fixed central theater. Below 1200px, side columns narrow and the bottom drawer scrolls horizontally. Below 860px, the shell becomes a single flowing column and the globe relinquishes fixed-height behavior.
 
 ## Color language
 
-- Signal bands: routine → elevated → high → critical.
-- FEINTCON: 5 green → 1 red.
-- Flags: REVIEW (red), CONFLICTING (orange), STALE (amber), DUPLICATE/SOCIAL-ONLY
-  (grey).
+- Signal: routine, elevated, high, critical.
+- FEINTCON: 5 green through 1 red.
+- Flags: review, conflicting, stale, duplicate, and social-primary.
 
-## Data flow
-
-All data flows through the typed client in `src/lib/api.ts`. The app polls every
-30s and after every mutation (status change, note, run-now).
+FEINTCON is an internal FeintSignal readiness indicator, not official DEFCON.

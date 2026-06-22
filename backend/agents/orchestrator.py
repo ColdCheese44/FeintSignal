@@ -43,6 +43,10 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
         "feintcon_level": feintcon.get("level"),
     }
 
+    from ..services import discord_service
+
+    discord = discord_service.dispatch_pipeline(alerts, briefing, run_record, feintcon)
+
     if persist:
         # Imported here to avoid a heavy import at module load / test time.
         from ..services import event_service
@@ -55,6 +59,7 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
         "events": scored,
         "alerts": alerts,
         "briefing": briefing,
+        "discord": discord,
     }
 
 

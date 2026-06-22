@@ -43,7 +43,7 @@ export function EventDialog({ event, onClose, onChanged }: Props) {
   return (
     <div className="dialog-backdrop" onClick={onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <span className="close" onClick={onClose}>✕</span>
+        <button className="close" onClick={onClose} aria-label="Close dossier">X</button>
         <h1>{event.title}</h1>
         <div className="ec-meta" style={{ marginBottom: 12 }}>
           <span>{event.region}</span>
@@ -58,7 +58,7 @@ export function EventDialog({ event, onClose, onChanged }: Props) {
             <strong style={{ color: "var(--band-critical)" }}>⚠ Human review required</strong>
             <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
               This claim type (e.g. conflict/escalation, attribution, outbreak, social-primary, or any
-              critical alert) must be reviewed by an operator before any Discord alert is sent.
+              critical alert) must be reviewed before escalation to alert channels. The human-review queue may receive a gated notice.
             </div>
           </div>
         )}

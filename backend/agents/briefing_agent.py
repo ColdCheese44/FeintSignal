@@ -10,6 +10,7 @@ from typing import Dict, List
 
 from ..core.time_utils import now_iso, now_utc
 from .feintcon_agent import DISCLAIMER
+from .perspective_agent import analyze_events
 
 
 def _top_signals(events: List[dict], limit: int = 5) -> List[dict]:
@@ -57,5 +58,10 @@ def generate_briefing(events: List[dict], feintcon: Dict[str, object]) -> Dict[s
         "top_signals": top,
         "events_by_region": by_region,
         "human_review_queue": review_queue,
+        "perspective_analysis": analyze_events(active),
+        "intelligence_method": (
+            "Multi-source deterministic synthesis. Political framing is attributed, uncertainty is explicit, "
+            "and no external AI research is claimed while ENABLE_LLM=false."
+        ),
         "disclaimer": DISCLAIMER,
     }

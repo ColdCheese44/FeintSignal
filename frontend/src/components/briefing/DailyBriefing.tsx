@@ -48,7 +48,33 @@ export function DailyBriefing({ briefing, onSelectEvent }: Props) {
           ))}
         </div>
       )}
+
+      {briefing.perspective_analysis?.length > 0 && (
+        <div className="perspective-brief">
+          <h3>Perspective analysis</h3>
+          {briefing.perspective_analysis.slice(0, 3).map((analysis) => (
+            <details key={analysis.event_id} className="perspective-card">
+              <summary>{analysis.title}</summary>
+              <Perspective label="Neutral assessment" text={analysis.neutral_assessment} />
+              <Perspective label="What the Left says" text={analysis.what_the_left_says} />
+              <Perspective label="What the Center says" text={analysis.what_the_center_says} />
+              <Perspective label="What the Right says" text={analysis.what_the_right_says} />
+              <Perspective label="Consensus" text={analysis.consensus} />
+              <div className="perspective-block uncertainty">
+                <strong>Uncertainties</strong>
+                <ul>{analysis.uncertainties.map((item) => <li key={item}>{item}</li>)}</ul>
+              </div>
+              <button className="btn" onClick={() => onSelectEvent(analysis.event_id)}>Open full dossier</button>
+            </details>
+          ))}
+          <p className="disclaimer">{briefing.intelligence_method}</p>
+        </div>
+      )}
       <p className="disclaimer">{briefing.disclaimer}</p>
     </div>
   );
+}
+
+function Perspective({ label, text }: { label: string; text: string }) {
+  return <div className="perspective-block"><strong>{label}</strong><p>{text}</p></div>;
 }

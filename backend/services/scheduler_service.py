@@ -1,59 +1,134 @@
-"""Lightweight background scheduler for the hourly update loop.
-
-Intentionally simple (stdlib ``threading.Timer``) and OFF by default — the API
-exposes manual ``run-now`` and the seed/hourly scripts cover automation. This is
-a known area flagged for hardening (see docs/ROADMAP.md).
-"""
+"""Supervised in-process scheduler with overlap protection and persisted status."""
 from __future__ import annotations
 
 import threading
+from datetime import timedelta
 from typing import Optional
 
 from ..core.config import get_settings
+from ..core.time_utils import now_iso, now_utc
+
+STATE_KEY = "scheduler"
+
+
+class SchedulerBusyError(RuntimeError):
+    pass
 
 
 class UpdateScheduler:
     def __init__(self, interval_minutes: Optional[int] = None):
         settings = get_settings()
-        self.interval_seconds = (interval_minutes or settings.update_interval_minutes) * 60
+        self.interval_minutes = max(1, interval_minutes or settings.update_interval_minutes)
         self._timer: Optional[threading.Timer] = None
-        self._running = False
-        self.last_status: Optional[dict] = None
+        self._state_lock = threading.RLock()
+        self._run_lock = threading.Lock()
+        self._enabled = False
+        self._running_now = False
+        self._last_started_at: Optional[str] = None
+        self._next_run_at: Optional[str] = None
+        self._last_status: Optional[dict] = None
+
+    def _persist(self) -> None:
+        try:
+            from . import event_service
+
+            event_service.set_system_state(STATE_KEY, self.status())
+        except Exception:
+            # Scheduling must continue even if a transient state write fails.
+            pass
+
+    def _schedule(self) -> None:
+        with self._state_lock:
+            if not self._enabled:
+                return
+            self._next_run_at = (now_utc() + timedelta(minutes=self.interval_minutes)).isoformat().replace("+00:00", "Z")
+            self._timer = threading.Timer(self.interval_minutes * 60, self._tick)
+            self._timer.daemon = True
+            self._timer.start()
+        self._persist()
 
     def _tick(self) -> None:
-        if not self._running:
-            return
+        with self._state_lock:
+            if not self._enabled:
+                return
+            self._timer = None
+            self._next_run_at = None
+        try:
+            self.run_once("scheduler")
+        except SchedulerBusyError:
+            with self._state_lock:
+                self._last_status = {"ok": False, "reason": "overlap_prevented", "finished_at": now_iso()}
+        finally:
+            with self._state_lock:
+                should_continue = self._enabled
+            if should_continue:
+                self._schedule()
+
+    def run_once(self, trigger: str = "manual") -> dict:
+        if not self._run_lock.acquire(blocking=False):
+            raise SchedulerBusyError("A FeintSignal pipeline run is already active.")
+        with self._state_lock:
+            self._running_now = True
+            self._last_started_at = now_iso()
+            self._next_run_at = None
+        self._persist()
         try:
             from ..agents import orchestrator
 
-            result = orchestrator.run_pipeline(trigger="scheduler")
-            self.last_status = {"ok": True, **result["run"]}
-        except Exception as exc:  # pragma: no cover - defensive
-            self.last_status = {"ok": False, "error": type(exc).__name__}
+            result = orchestrator.run_pipeline(trigger=trigger)
+            with self._state_lock:
+                self._last_status = {"ok": True, **result["run"]}
+            return result
+        except Exception as exc:
+            with self._state_lock:
+                self._last_status = {"ok": False, "error": type(exc).__name__, "finished_at": now_iso()}
+            try:
+                from . import discord_service
+
+                discord_service.send(discord_service.build_error_payload(type(exc).__name__, trigger), channel="errors")
+            except Exception:
+                pass
+            raise
         finally:
-            if self._running:
-                self._schedule()
+            with self._state_lock:
+                self._running_now = False
+            self._run_lock.release()
+            self._persist()
 
-    def _schedule(self) -> None:
-        self._timer = threading.Timer(self.interval_seconds, self._tick)
-        self._timer.daemon = True
-        self._timer.start()
-
-    def start(self, run_immediately: bool = False) -> None:
-        if self._running:
-            return
-        self._running = True
+    def start(self, interval_minutes: Optional[int] = None, run_immediately: bool = False) -> dict:
+        with self._state_lock:
+            if interval_minutes is not None:
+                self.interval_minutes = max(1, interval_minutes)
+            if self._enabled:
+                return self.status()
+            self._enabled = True
         if run_immediately:
-            self._tick()
+            threading.Thread(target=self._tick, name="feintsignal-scheduler", daemon=True).start()
         else:
             self._schedule()
+        self._persist()
+        return self.status()
 
-    def stop(self) -> None:
-        self._running = False
-        if self._timer:
-            self._timer.cancel()
-            self._timer = None
+    def stop(self) -> dict:
+        with self._state_lock:
+            self._enabled = False
+            self._next_run_at = None
+            if self._timer:
+                self._timer.cancel()
+                self._timer = None
+        self._persist()
+        return self.status()
 
-    @property
-    def running(self) -> bool:
-        return self._running
+    def status(self) -> dict:
+        with self._state_lock:
+            return {
+                "scheduler_enabled": self._enabled,
+                "scheduler_interval_minutes": self.interval_minutes,
+                "scheduler_running_now": self._running_now,
+                "scheduler_last_started_at": self._last_started_at,
+                "scheduler_next_run_at": self._next_run_at,
+                "scheduler_last_status": self._last_status,
+            }
+
+
+scheduler = UpdateScheduler()
