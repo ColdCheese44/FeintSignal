@@ -29,7 +29,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - FEINTCON calculation
 - Discord alert payload generation with default-off delivery
 - Watchtower Discord command-center routing for 32 operational channels
-- gated Discord dispatch for alerts, heartbeats, agent runs, errors, and once-daily briefings
+- hybrid webhook/bot dispatch across all 32 destinations with alert deduplication, regional/domain fanout, daily digests, and transport fallback
 - React/Vite/TypeScript dashboard shell
 - globe-first tabbed workspace with an offline-capable interactive 3D globe, collapsible navigation, and collapsible system tools
 - balanced keyless RSS collection across left, center, right, international, official, and specialist source buckets
@@ -46,7 +46,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 
 ```text
 pytest backend/tests -q
-34 passed
+42 passed
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).

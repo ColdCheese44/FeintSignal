@@ -48,7 +48,8 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
 
     from ..services import discord_service
 
-    discord = discord_service.dispatch_pipeline(alerts, briefing, run_record, feintcon)
+    discord = discord_service.dispatch_pipeline(alerts, briefing, run_record, feintcon, events=scored)
+    run_record["discord"] = discord_service.summarize_dispatch(discord)
 
     if persist:
         # Imported here to avoid a heavy import at module load / test time.

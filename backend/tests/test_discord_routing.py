@@ -3,7 +3,7 @@ from pathlib import Path
 
 from backend.agents import alert_router
 from backend.core import config as config_module
-from backend.core.discord_routing import load_discord_config, route_channel
+from backend.core.discord_routing import domain_channel, load_discord_config, region_channel, route_channel
 from backend.services import discord_service
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -52,6 +52,11 @@ def test_config_loads_all_command_center_channels():
     assert route_channel("heartbeat")["channel_name"] == "fs-heartbeat-log"
     assert {item["channel_name"] for item in channels} >= {"fs-command-center"}
     assert "fs-command-post" not in {item["channel_name"] for item in channels}
+    assert region_channel("Middle East")["channel_name"] == "fs-middle-east"
+    assert domain_channel("terrorism")["channel_name"] == "fs-terrorism"
+    assert domain_channel("geopolitics")["channel_name"] == "fs-politics"
+    assert set(loaded["region_routes"].values()) <= {item["id"] for item in channels}
+    assert set(loaded["domain_routes"].values()) <= {item["id"] for item in channels}
 
 
 def test_all_configured_environment_fields_exist_in_example():

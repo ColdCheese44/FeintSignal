@@ -18,4 +18,4 @@ The current collection, Anthropic synthesis, dashboard, scheduler, and webhook d
 - `ENABLE_LLM=true` permits a single bounded provider request over the top `LLM_MAX_EVENTS` signals. Provider failure preserves the deterministic briefing.
 - `ENABLE_LIVE_RESEARCH=true` permits the allowlisted RSS collector.
 - `ENABLE_DISCORD_SEND=false` still prevents all outbound Discord messages. Turn it on only when automatic mobile posting is desired.
-- The bot token is validated for readiness, but Watchtower does not run a Discord Gateway connection yet. Outbound posting continues through channel webhooks.
+- Watchtower's bot token is used for outbound posts to bot-first channels. A persistent Discord Gateway connection is still deferred until interactive slash commands are implemented.

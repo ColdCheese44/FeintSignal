@@ -11,6 +11,8 @@ export function DiscordStatusPanel({ status, onTest }: Props) {
   const [testResult, setTestResult] = useState<string | null>(null);
   const routes = Object.entries(status?.channels ?? {});
   const configured = routes.filter(([, channel]) => channel.webhook_configured).length;
+  const destinations = Object.values(status?.destinations ?? {});
+  const deliverable = destinations.filter((destination) => destination.delivery_available).length;
 
   async function test() {
     setTesting(true);
@@ -38,6 +40,9 @@ export function DiscordStatusPanel({ status, onTest }: Props) {
         </div>
       )}
       {status?.bot && <div className="kv"><span>Channel IDs</span><span>{status.bot.channel_ids_configured}</span></div>}
+      {destinations.length > 0 && <div className="kv"><span>Delivery coverage</span><span>{deliverable} / {destinations.length}</span></div>}
+      <div className="kv"><span>Alert fanout</span><span>{status?.fanout_enabled ? "ON" : "OFF"}</span></div>
+      <div className="kv"><span>Daily digests</span><span>{status?.digests_enabled ? "ON" : "OFF"}</span></div>
       <div className="kv"><span>Webhook routes</span><span>{configured} / {routes.length}</span></div>
       <div className="discord-route-list">
         {routes.map(([route, channel]) => (

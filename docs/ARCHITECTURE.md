@@ -39,7 +39,7 @@ The in-process scheduler exposes status, start, and stop APIs, prevents overlapp
 
 ## Discord
 
-The JSON command-center config is the source of truth for 32 channels. Nine webhook routes are active in the MVP. The pipeline can dispatch eligible alerts, heartbeats, agent summaries, safe error reports, and at most one successful daily briefing per briefing date. Every network call still requires `ENABLE_DISCORD_SEND=true` and the matching webhook.
+The JSON command-center config is the source of truth for 32 channels, region mappings, and domain mappings. Nine routes prefer webhooks; Watchtower's REST delivery uses channel IDs for the rest and as an explicit webhook fallback. The pipeline dispatches deduplicated alerts, regional/domain fanout, operations telemetry, and date-gated daily intelligence. Every network call still requires `ENABLE_DISCORD_SEND=true` and a configured webhook or bot destination.
 
 ## Safety boundaries
 

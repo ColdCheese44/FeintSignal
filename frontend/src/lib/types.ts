@@ -110,6 +110,13 @@ export interface AgentRun {
   duplicates: number;
   alerts_generated: number;
   feintcon_level: number | null;
+  discord?: {
+    attempted: number;
+    sent: number;
+    skipped: number;
+    failed: number;
+    transports: Record<string, number>;
+  };
 }
 
 export interface TopSignal {
@@ -166,6 +173,9 @@ export interface DiscordChannelStatus {
 
 export interface DiscordStatus {
   enable_discord_send: boolean;
+  fanout_enabled?: boolean;
+  digests_enabled?: boolean;
+  raw_logs_enabled?: boolean;
   bot?: {
     name: string;
     identity_configured: boolean;
@@ -174,6 +184,12 @@ export interface DiscordStatus {
     runtime: string;
   };
   channels: Record<string, DiscordChannelStatus>;
+  destinations?: Record<string, DiscordChannelStatus & {
+    category: string;
+    bot_channel_configured: boolean;
+    delivery_available: boolean;
+    preferred_transport: "webhook" | "bot" | null;
+  }>;
   pending_alerts: {
     event_id: string;
     alert_level: string;

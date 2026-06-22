@@ -7,6 +7,7 @@
   "server_id_env_var": "DISCORD_SERVER_ID",
   "default_send_enabled": false,
   "routes": {
+    "command_center": "command_center",
     "heartbeat": "heartbeat",
     "system_status": "system_status",
     "agent_runs": "agent_runs",
@@ -15,7 +16,34 @@
     "breaking": "breaking",
     "critical": "critical",
     "daily_briefing": "daily_briefing",
-    "sitrep": "sitrep"
+    "sitrep": "sitrep",
+    "bias_framing": "bias_framing",
+    "global": "region_global",
+    "bot_errors": "bot_errors",
+    "raw_logs": "raw_logs",
+    "dev_notes": "dev_notes"
+  },
+  "region_routes": {
+    "Global": "region_global",
+    "North America": "region_north_america",
+    "Latin America": "region_latin_america",
+    "Europe": "region_europe",
+    "Middle East": "region_middle_east",
+    "Africa": "region_africa",
+    "Asia-Pacific": "region_asia_pacific"
+  },
+  "domain_routes": {
+    "cyber": "domain_cyber",
+    "conflict": "domain_conflict",
+    "politics": "domain_politics",
+    "geopolitics": "domain_politics",
+    "economy": "domain_economy",
+    "energy": "domain_energy_supplychain",
+    "disaster": "domain_disasters_health",
+    "health": "domain_disasters_health",
+    "crime": "domain_organized_crime",
+    "terrorism": "domain_terrorism",
+    "technology": "domain_tech_ai"
   },
   "channels": [
     {"id":"command_center","category":"FEINTSIGNAL COMMAND","channel_name":"fs-command-center","purpose":"Operator commands and future bot interactions.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_COMMAND_CENTER","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},

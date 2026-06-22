@@ -55,6 +55,10 @@ app.include_router(routes_discord.router)
 @app.on_event("startup")
 def _startup() -> None:
     logging.basicConfig(level=getattr(logging, settings.log_level.upper(), logging.INFO))
+    # httpx INFO records include complete request URLs; Discord webhook URLs are
+    # credentials and must never be written to local runtime logs.
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
     database.init_db()
     # Auto-seed once if there are no events yet, so the dashboard is never empty.
     from .services import event_service

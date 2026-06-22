@@ -37,6 +37,13 @@ def load_discord_config() -> Dict[str, object]:
     unknown_routes = set(routes.values()) - seen_ids
     if unknown_routes:
         raise ValueError(f"Discord routes reference unknown channels: {sorted(unknown_routes)}")
+    for mapping_name in ("region_routes", "domain_routes"):
+        mapping = config.get(mapping_name, {})
+        if not isinstance(mapping, dict):
+            raise ValueError(f"Discord config {mapping_name} must be an object.")
+        unknown = set(mapping.values()) - seen_ids
+        if unknown:
+            raise ValueError(f"Discord {mapping_name} references unknown channels: {sorted(unknown)}")
     return config
 
 
@@ -57,6 +64,16 @@ def route_channel(message_type: str) -> dict:
     if not channel_id:
         raise ValueError(f"Unknown Discord message type: {message_type}")
     return resolve_channel(channel_id)
+
+
+def region_channel(region: str) -> dict | None:
+    channel_id = load_discord_config().get("region_routes", {}).get(region)  # type: ignore[union-attr]
+    return resolve_channel(channel_id) if channel_id else None
+
+
+def domain_channel(category: str) -> dict | None:
+    channel_id = load_discord_config().get("domain_routes", {}).get(str(category).lower())  # type: ignore[union-attr]
+    return resolve_channel(channel_id) if channel_id else None
 
 
 def webhook_channels() -> List[dict]:

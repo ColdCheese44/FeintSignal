@@ -41,6 +41,9 @@ def discord_status():
     settings = get_settings()
     return {
         "enable_discord_send": settings.enable_discord_send,
+        "fanout_enabled": settings.enable_discord_fanout,
+        "digests_enabled": settings.enable_discord_digests,
+        "raw_logs_enabled": settings.enable_discord_raw_logs,
         "bot": {
             "name": settings.discord_bot_name,
             "identity_configured": all(settings.secret_configured(name) for name in (
@@ -48,9 +51,10 @@ def discord_status():
             )),
             "server_configured": settings.secret_configured("DISCORD_SERVER_ID"),
             "channel_ids_configured": settings.discord_channel_id_count(),
-            "runtime": "webhook_outbound_only",
+            "runtime": "hybrid_webhook_bot_outbound",
         },
         "channels": discord_service.safe_channel_status(),
+        "destinations": discord_service.safe_destination_status(),
         "pending_alerts": [
             {
                 "event_id": a["event_id"],

@@ -62,6 +62,10 @@ class Settings:
 
     enable_discord_send: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_SEND"), False))
     discord_bot_name: str = field(default_factory=lambda: os.getenv("DISCORD_BOT_NAME", "Watchtower").strip() or "Watchtower")
+    enable_discord_fanout: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_FANOUT"), False))
+    enable_discord_digests: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_DIGESTS"), False))
+    enable_discord_raw_logs: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_RAW_LOGS"), False))
+    discord_max_fanout_per_run: int = field(default_factory=lambda: _as_int(os.getenv("DISCORD_MAX_FANOUT_PER_RUN"), 24))
 
     update_interval_minutes: int = field(default_factory=lambda: _as_int(os.getenv("UPDATE_INTERVAL_MINUTES"), 60))
     enable_scheduler: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_SCHEDULER"), False))
@@ -127,6 +131,10 @@ class Settings:
             "openai_key_configured": self.secret_configured("OPENAI_API_KEY"),
             "anthropic_key_configured": self.secret_configured("ANTHROPIC_API_KEY"),
             "enable_discord_send": self.enable_discord_send,
+            "enable_discord_fanout": self.enable_discord_fanout,
+            "enable_discord_digests": self.enable_discord_digests,
+            "enable_discord_raw_logs": self.enable_discord_raw_logs,
+            "discord_max_fanout_per_run": max(1, min(self.discord_max_fanout_per_run, 50)),
             "update_interval_minutes": self.update_interval_minutes,
             "enable_scheduler": self.enable_scheduler,
             "max_events_per_run": self.max_events_per_run,

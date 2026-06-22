@@ -1,8 +1,8 @@
 # FeintSignal Command Center
 
-Discord is the mobile alert layer for FeintSignal. The current runtime sends outbound webhook payloads only. Watchtower's bot identity, server, and channel IDs are configured for the next interactive phase, while sending remains disabled until `ENABLE_DISCORD_SEND=true` and the selected webhook is configured.
+Discord is the mobile dissemination layer for FeintSignal. Nine operational routes prefer webhooks, while Watchtower uses its bot token and channel IDs for the remaining destinations. Sending remains controlled by `ENABLE_DISCORD_SEND`.
 
-The FeintSignal Discord bot is named **Watchtower**. Its credentials and channel access are configured, but a Discord Gateway process and interactive commands are intentionally not started yet.
+The FeintSignal Discord bot is named **Watchtower**. Outbound bot delivery is active; a persistent Discord Gateway process and interactive slash commands are intentionally deferred.
 
 ## Recommended Watchtower permissions
 
@@ -27,9 +27,9 @@ Create these categories and text channels in order:
 
 The machine-readable copy, purposes, environment-variable names, and future ID fields live in `config/discord_channels.json`.
 
-## Webhooks needed now
+## Webhook-first routes
 
-Create webhooks only for these nine channels:
+These nine channels prefer webhooks and fall back to Watchtower when the bot channel is configured:
 
 | Channel | Local `.env` variable |
 | --- | --- |
@@ -50,8 +50,8 @@ Create webhooks only for these nine channels:
 3. Name it for the route, such as `FS Heartbeat`.
 4. Copy the webhook URL.
 5. Copy `.env.example` to `.env` locally and paste the URL after the matching variable.
-6. Leave `ENABLE_DISCORD_SEND=false` while testing payload generation.
-7. After dry-run verification, set `ENABLE_DISCORD_SEND=true` deliberately.
+6. Use `python scripts/send_test_discord.py <route> --dry-run` before enabling delivery.
+7. Set `ENABLE_DISCORD_SEND=true` deliberately after verification.
 
 Never paste webhook URLs into JSON, docs, screenshots, issues, commits, or chat. Never commit `.env`.
 
@@ -61,20 +61,21 @@ Never paste webhook URLs into JSON, docs, screenshots, issues, commits, or chat.
 - Agent summaries, errors, and cost warnings route to their matching OPS channels.
 - Standard alerts route to `fs-breaking-alerts`.
 - Critical alerts route directly to `fs-critical-alerts` after meeting the corroboration and score thresholds.
-- Daily briefings and situation reports route to `fs-daily-brief` and `fs-sitrep`.
+- Alerts fan out once to their matching region and domain; critical alerts also reach `fs-global`.
+- Daily briefings, situation reports, bias framing, regional digests, and domain digests populate the intelligence channels once per day.
 - Payload generation never sends by itself.
-- A send requires both the global enable flag and the matching webhook.
+- A send requires the global enable flag plus a matching webhook or Watchtower bot destination.
 - Webhook values are never returned by status endpoints or written to logs.
 - Pipeline runs dispatch eligible alerts plus heartbeat and agent-run summaries through those gates.
 - The daily briefing route sends at most once per briefing date after a successful delivery.
 - Scheduler failures generate a safe error payload for `fs-error-log`, still subject to the same gates.
 
-Generate a safe test payload with `POST /discord/test`. It defaults to dry-run mode. `GET /discord/status` reports only booleans and channel names, never URLs. The dashboard Discord panel shows all nine routes and exposes the same dry-run test.
+Generate a safe test payload with `POST /discord/test`. It defaults to dry-run mode. `GET /discord/status` reports transport readiness for all 32 destinations without returning URLs, IDs, or tokens. The full output matrix and noise controls are documented in [DISCORD_OUTPUTS.md](DISCORD_OUTPUTS.md).
 
 ## Bot identity and channel IDs
 
 The `.env.example` file contains one `DISCORD_SERVER_ID` field, all nine `DISCORD_WEBHOOK_*` fields, and a unique `DISCORD_CHANNEL_*` field for every one of the 32 channels. The local `.env` now has these identifiers populated. The status API reports configuration counts only and never returns the values.
 
-`DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `DISCORD_BOT_TOKEN` are also configured locally. They remain unused by the webhook sender until the interactive Watchtower runtime is implemented.
+`DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `DISCORD_BOT_TOKEN` are configured locally. The token now supports outbound delivery to bot-first channels; the application ID and public key remain ready for the future interactive-command phase.
 
 Suggested bot identities: **FS Watchtower**, **FS Heartbeat**, **FS Briefing**, **FS Alert Router**, and **FS Analyst**.
