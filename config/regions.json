@@ -1,0 +1,12 @@
+{
+  "regions": [
+    {"id": "north_america", "label": "North America", "lat": 40.0, "lon": -100.0},
+    {"id": "latin_america", "label": "Latin America", "lat": -15.0, "lon": -60.0},
+    {"id": "europe", "label": "Europe", "lat": 50.0, "lon": 10.0},
+    {"id": "middle_east", "label": "Middle East", "lat": 29.0, "lon": 45.0},
+    {"id": "africa", "label": "Africa", "lat": 2.0, "lon": 21.0},
+    {"id": "asia_pacific", "label": "Asia-Pacific", "lat": 10.0, "lon": 115.0},
+    {"id": "central_asia", "label": "Central Asia", "lat": 45.0, "lon": 68.0},
+    {"id": "global", "label": "Global", "lat": 0.0, "lon": 0.0}
+  ]
+}

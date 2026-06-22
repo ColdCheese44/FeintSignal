@@ -1,0 +1,27 @@
+{
+  "branding": {
+    "name": "FeintSignal",
+    "tagline": "Local-first current-affairs intelligence",
+    "theme": "dark-tactical"
+  },
+  "feintcon": {
+    "disclaimer": "FEINTCON is an internal FeintSignal readiness indicator. It is not an official government or military readiness condition.",
+    "colors": {"5": "#2e7d32", "4": "#9e9d24", "3": "#e0a317", "2": "#e8590c", "1": "#c62828"}
+  },
+  "signal_bands": [
+    {"id": "critical", "min": 85, "color": "#c62828", "label": "Critical"},
+    {"id": "high", "min": 75, "color": "#e0a317", "label": "High"},
+    {"id": "elevated", "min": 60, "color": "#3a6ea5", "label": "Elevated"},
+    {"id": "routine", "min": 0, "color": "#5c6670", "label": "Routine"}
+  ],
+  "panels": {
+    "left_rail": ["feed", "regions", "watchlists", "system"],
+    "bottom_drawer": ["agents", "heartbeat", "cost", "discord"]
+  },
+  "globe": {
+    "mode": "2d-fallback",
+    "future_3d": true,
+    "projection": "equirectangular"
+  },
+  "api_base_url": "http://127.0.0.1:8765"
+}

@@ -1,0 +1,9 @@
+{
+  "_note": "Operator watchlists boost relevance for matching events (relevance is an input; boosting logic is a roadmap item).",
+  "watchlists": [
+    {"id": "critical-infra", "label": "Critical Infrastructure", "match_tags": ["cyber", "critical-infrastructure", "energy"], "relevance_boost": 10},
+    {"id": "escalation", "label": "Conflict Escalation", "match_tags": ["conflict", "escalation", "maritime"], "relevance_boost": 12},
+    {"id": "elections", "label": "Elections & Stability", "match_tags": ["election", "politics"], "relevance_boost": 6},
+    {"id": "health-security", "label": "Health Security", "match_tags": ["outbreak", "health"], "relevance_boost": 8}
+  ]
+}

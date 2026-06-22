@@ -1,0 +1,26 @@
+{
+  "_note": "UI/documentation mirror of backend.agents.signal_scorer.DEFAULT_SCORING_RULES. The backend is the source of truth; keep these in sync.",
+  "weights": {
+    "severity": 0.30,
+    "urgency": 0.20,
+    "confidence": 0.25,
+    "relevance": 0.15,
+    "source_quality": 0.10
+  },
+  "penalties": {
+    "duplicate": 15.0,
+    "low_confidence": 10.0,
+    "conflicting_reports": 8.0,
+    "stale": 6.0,
+    "social_only": 12.0,
+    "sensational": 5.0
+  },
+  "thresholds": {
+    "low_confidence_below": 50.0,
+    "stale_hours": 72.0
+  },
+  "alert_rules": {
+    "standard": {"signal_min": 75, "confidence_min": 60, "source_reliability_min": 70},
+    "critical": {"signal_min": 85, "confidence_min": 75, "requires": "two independent sources OR one official source, not duplicate, not stale"}
+  }
+}

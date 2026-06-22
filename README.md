@@ -19,7 +19,7 @@ cd FeintSignal
 
 ## MVP scaffold status
 
-The MVP scaffold has been generated and validated locally in this ChatGPT runtime as a downloadable package. It includes:
+The MVP scaffold is **implemented and committed in this repository** and validated locally on the Windows host at `D:\Windows\FeintSignal`. It includes:
 
 - Python/FastAPI backend
 - SQLite local state
@@ -35,7 +35,7 @@ The MVP scaffold has been generated and validated locally in this ChatGPT runtim
 - Windows PowerShell run scripts
 - docs for architecture, scoring, Discord setup, and dashboard design
 
-## Validation completed before handoff
+## Validation results
 
 ```text
 pytest backend/tests -q
@@ -43,16 +43,24 @@ pytest backend/tests -q
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).
+FEINTCON 3 — Significant multi-region instability or major confirmed crisis
 
-FastAPI smoke checks:
-/health 200
-/events 200
-/system/feintcon 200
-/system/heartbeat 200
-/briefings/daily/latest 200
+FastAPI smoke checks (all 200):
+GET  /health
+GET  /events                       (11 events; 1 suppressed duplicate)
+GET  /events/{id}
+POST /events/{id}/status
+POST /events/{id}/notes
+GET  /system/feintcon              (level 3)
+GET  /system/heartbeat
+GET  /briefings/daily/latest
+POST /briefings/daily/generate
+GET  /agents/runs
+POST /agents/run-now
+POST /discord/test                 (sent:false — sending disabled by default)
 
 frontend npm run build
-vite build succeeded
+tsc + vite build succeeded (dist/ emitted)
 ```
 
 ## Safety posture
@@ -64,7 +72,7 @@ vite build succeeded
 - Discord send is disabled by default.
 - FEINTCON is explicitly internal and not official DEFCON.
 
-## Local run commands after scaffold is copied into this repo
+## Local run commands
 
 Backend:
 
@@ -90,6 +98,20 @@ Tests:
 pytest backend/tests -q
 ```
 
-## Next engineering step
+## Project layout
 
-Copy or commit the generated scaffold files into this repository, then run the validation commands above on the Windows host at `D:\Windows\FeintSignal`.
+```
+backend/   FastAPI app, agent pipeline (collector → normalizer → source_validator →
+           deduper → signal_scorer → feintcon → alert_router → briefing), services, tests
+frontend/  React + Vite + TypeScript tactical dashboard (2D SignalGlobe + 3D-ready contract)
+config/    topics, regions, scoring rules, source taxonomy, channels, watchlists, UI
+data/      mock_events.json, mock_sources.json (the SQLite DB is generated, not tracked)
+scripts/   PowerShell run scripts + seed/hourly Python entry points
+docs/      ARCHITECTURE, INTELLIGENCE_DOCTRINE, SCORING_MODEL, DISCORD_SETUP, DASHBOARD_DESIGN, ROADMAP
+```
+
+## Next engineering steps
+
+See [docs/ROADMAP.md](docs/ROADMAP.md): hourly scheduler hardening, dashboard-visible
+agent run history, 3D globe upgrade, RSS/live ingestion behind `ENABLE_LIVE_RESEARCH=false`,
+and frontend smoke tests.

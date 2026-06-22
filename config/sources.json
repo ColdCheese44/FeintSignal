@@ -1,0 +1,21 @@
+{
+  "_note": "Source-type taxonomy and reliability tiers. No real outlet is labelled here; tiers are structural and applied to per-source reliability_score values supplied with the data.",
+  "source_types": [
+    {"id": "official", "label": "Official / Government", "base_trust": "high"},
+    {"id": "major_media", "label": "Major Media", "base_trust": "moderate-high"},
+    {"id": "international_media", "label": "International Media", "base_trust": "moderate-high"},
+    {"id": "local_media", "label": "Local Media", "base_trust": "moderate"},
+    {"id": "specialist", "label": "Specialist / Trade", "base_trust": "moderate-high"},
+    {"id": "academic", "label": "Academic / Research", "base_trust": "high"},
+    {"id": "ngo", "label": "NGO / Monitor", "base_trust": "moderate"},
+    {"id": "social", "label": "Social / Unverified", "base_trust": "low"},
+    {"id": "unknown", "label": "Unknown", "base_trust": "unverified"}
+  ],
+  "reliability_tiers": [
+    {"id": "high", "min": 80},
+    {"id": "moderate", "min": 65},
+    {"id": "low", "min": 45},
+    {"id": "unverified", "min": 0}
+  ],
+  "political_lean_values": ["left", "center-left", "center", "center-right", "right", "state-aligned", "unknown"]
+}

@@ -1,0 +1,11 @@
+{
+  "_note": "Logical Discord channel mapping. Webhook URLs are NEVER stored here; they live only in environment variables and are referenced by env_var name.",
+  "channels": [
+    {"id": "heartbeat", "label": "System Heartbeat", "env_var": "DISCORD_WEBHOOK_HEARTBEAT", "purpose": "Periodic liveness pings."},
+    {"id": "breaking", "label": "Breaking Signals", "env_var": "DISCORD_WEBHOOK_BREAKING", "purpose": "Standard/critical alert payloads (human-review gated)."},
+    {"id": "daily_briefing", "label": "Daily Briefing", "env_var": "DISCORD_WEBHOOK_DAILY_BRIEFING", "purpose": "Once-daily situation summary."},
+    {"id": "system_status", "label": "System Status", "env_var": "DISCORD_WEBHOOK_SYSTEM_STATUS", "purpose": "Config / gate / error status."}
+  ],
+  "send_enabled_env_var": "ENABLE_DISCORD_SEND",
+  "default_send_enabled": false
+}

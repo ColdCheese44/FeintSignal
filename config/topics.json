@@ -1,0 +1,13 @@
+{
+  "topics": [
+    {"id": "cyber", "label": "Cyber & Infrastructure", "weight": 1.1, "keywords": ["cyber", "ransomware", "breach", "grid", "ics", "outage"]},
+    {"id": "conflict", "label": "Armed Conflict", "weight": 1.2, "keywords": ["strike", "offensive", "frontier", "escalation", "ceasefire"]},
+    {"id": "geopolitics", "label": "Geopolitics & Security", "weight": 1.1, "keywords": ["drills", "sanctions", "treaty", "strait", "deployment"]},
+    {"id": "politics", "label": "Domestic Politics & Elections", "weight": 0.9, "keywords": ["election", "coalition", "budget", "shutdown", "vote"]},
+    {"id": "disaster", "label": "Natural Disasters", "weight": 1.0, "keywords": ["earthquake", "flood", "storm", "wildfire", "tsunami"]},
+    {"id": "energy", "label": "Energy & Supply Chain", "weight": 1.0, "keywords": ["pipeline", "oil", "gas", "supply", "shortage"]},
+    {"id": "crime", "label": "Organized Crime & Security", "weight": 0.85, "keywords": ["cartel", "gang", "riot", "trafficking"]},
+    {"id": "health", "label": "Public Health", "weight": 1.0, "keywords": ["outbreak", "virus", "illness", "epidemic", "cluster"]},
+    {"id": "technology", "label": "Technology & AI Regulation", "weight": 0.8, "keywords": ["ai", "regulation", "chip", "platform", "oversight"]}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "feintsignal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FeintSignal — local-first AI/current-affairs intelligence dashboard (root convenience scripts; the frontend in frontend/ is self-contained).",
+  "scripts": {
+    "frontend:install": "npm --prefix frontend install",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build"
+  }
+}
