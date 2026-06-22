@@ -92,3 +92,9 @@ def test_discord_send_remains_disabled_by_default(monkeypatch):
         "channel": "fs-heartbeat-log",
     }
     config_module._settings = None
+
+
+def test_discord_payloads_use_watchtower_identity():
+    payload = discord_service.build_test_payload("system_status")
+    assert payload["username"] == "Watchtower"
+    assert payload["content"].startswith("Watchtower connectivity test")

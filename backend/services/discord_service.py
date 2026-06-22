@@ -36,8 +36,8 @@ def build_test_payload(channel: str = "system_status") -> Dict[str, object]:
     return {
         "route": target["id"],
         "channel": target["channel_name"],
-        "username": "FeintSignal",
-        "content": "FeintSignal connectivity test (no live alert).",
+        "username": "Watchtower",
+        "content": "Watchtower connectivity test (no live alert).",
         "embeds": [
             {
                 "title": "System Status Test",
@@ -58,7 +58,7 @@ def _embed_payload(route: str, title: str, description: str, fields: list[dict],
     return {
         "route": target["id"],
         "channel": target["channel_name"],
-        "username": "FeintSignal",
+        "username": "Watchtower",
         "embeds": [{
             "title": title[:256],
             "description": description[:4096],
