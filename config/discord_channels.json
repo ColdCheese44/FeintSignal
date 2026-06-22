@@ -2,6 +2,7 @@
   "schema_version": 1,
   "_note": "Discord command-center routing. Store real IDs and webhook URLs only in .env; never put secrets in this file.",
   "bot_name": "Watchtower",
+  "server_name": "FeintSignal Command Center",
   "send_enabled_env_var": "ENABLE_DISCORD_SEND",
   "server_id_env_var": "DISCORD_SERVER_ID",
   "default_send_enabled": false,
@@ -17,7 +18,7 @@
     "sitrep": "sitrep"
   },
   "channels": [
-    {"id":"command_post","category":"FEINTSIGNAL COMMAND","channel_name":"fs-command-post","purpose":"Operator commands and future bot interactions.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_COMMAND_POST","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
+    {"id":"command_center","category":"FEINTSIGNAL COMMAND","channel_name":"fs-command-center","purpose":"Operator commands and future bot interactions.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_COMMAND_CENTER","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
     {"id":"watchlist","category":"FEINTSIGNAL COMMAND","channel_name":"fs-watchlist","purpose":"Operator-maintained priority topics, entities, and regions.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_WATCHLIST","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
     {"id":"operator_notes","category":"FEINTSIGNAL COMMAND","channel_name":"fs-operator-notes","purpose":"Human context, decisions, and handoff notes.","webhook_recommended":false,"bot_channel_id_recommended":true,"env_var":null,"channel_id_env_var":"DISCORD_CHANNEL_OPERATOR_NOTES","placeholder_server_id":"","placeholder_channel_id":"","enabled_by_default":false},
 

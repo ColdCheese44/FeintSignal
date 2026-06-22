@@ -8,9 +8,9 @@ For Discord delivery, create the nine channel webhooks listed in `DISCORD_SETUP.
 
 ## Obtain only when enabling the feature
 
-- **One LLM provider key**: `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`. The MVP does not call either provider while `ENABLE_LLM=false`, and an LLM adapter is not implemented yet.
+- **One or both LLM provider keys**: `OPENAI_API_KEY` and/or `ANTHROPIC_API_KEY`. A future `dual` mode can use both for failover or cross-model comparison, but the MVP does not call either provider while `ENABLE_LLM=false`, and an LLM adapter is not implemented yet.
 - **Watchtower Discord bot credentials**: application ID, public key, and bot token. These are not needed for webhook-only outbound posting and no bot runtime exists yet.
-- **Live-source credentials**: none are currently supported. The live collector intentionally stops if `ENABLE_LIVE_RESEARCH=true`; do not purchase or add a news API until that collector is selected and implemented. Keyless RSS or GDELT ingestion can be evaluated first.
+- **Live-source credentials**: none are needed for the balanced default RSS collection. The allowlisted feeds are configured in `config/live_sources.json` and remain inactive while `ENABLE_LIVE_RESEARCH=false`.
 
 ## Always required locally
 

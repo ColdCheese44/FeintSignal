@@ -40,6 +40,7 @@ def test_config_loads_all_command_center_channels():
     loaded = load_discord_config()
     channels = loaded["channels"]
     assert loaded["bot_name"] == "Watchtower"
+    assert loaded["server_name"] == "FeintSignal Command Center"
     assert len(channels) == 32
     assert len({item["channel_name"] for item in channels}) == 32
     assert all(item["channel_id_env_var"] for item in channels)
@@ -49,6 +50,8 @@ def test_config_loads_all_command_center_channels():
     assert not removed & {item["channel_name"] for item in channels}
     assert all(item["enabled_by_default"] is False for item in channels)
     assert route_channel("heartbeat")["channel_name"] == "fs-heartbeat-log"
+    assert {item["channel_name"] for item in channels} >= {"fs-command-center"}
+    assert "fs-command-post" not in {item["channel_name"] for item in channels}
 
 
 def test_all_configured_environment_fields_exist_in_example():

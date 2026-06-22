@@ -7,7 +7,7 @@ FeintSignal maintains private awareness of major world events. It should explain
 ## Intelligence cycle
 
 1. **Direction**: watchlists, regions, domains, and operator priorities define collection needs.
-2. **Collection**: mock data today; approved RSS and API sources later behind the live-research gate.
+2. **Collection**: mock data by default; approved, balanced RSS sources behind the live-research gate.
 3. **Processing**: normalize time, geography, source identity, political lean, and independence groups.
 4. **Validation**: assess reliability, corroboration, staleness, conflicts, sensationalism, and duplicates.
 5. **Analysis**: score importance, test alternative explanations, identify contested language, and separate confirmed facts from uncertainty.

@@ -32,6 +32,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - gated Discord dispatch for alerts, heartbeats, agent runs, errors, and once-daily briefings
 - React/Vite/TypeScript dashboard shell
 - globe-first tabbed workspace with an offline-capable interactive 3D globe, collapsible navigation, and collapsible system tools
+- balanced keyless RSS collection across left, center, right, international, official, and specialist source buckets
 - neutral perspective dossiers with left, center, right, consensus, and uncertainty sections
 - supervised hourly scheduler with overlap protection and dashboard controls
 - mock current affairs data
@@ -44,7 +45,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 
 ```text
 pytest backend/tests -q
-23 passed
+27 passed
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).

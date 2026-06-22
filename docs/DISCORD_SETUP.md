@@ -1,4 +1,4 @@
-# FeintSignal Discord Command Center
+# FeintSignal Command Center
 
 Discord is the mobile alert layer for FeintSignal. The current MVP sends outbound webhook payloads only. It does not require a Discord bot, server ID, or channel IDs, and sending remains disabled until `ENABLE_DISCORD_SEND=true` and the selected webhook is configured.
 
@@ -8,7 +8,7 @@ The planned FeintSignal Discord bot is named **Watchtower**. Its name is configu
 
 Create these categories and text channels in order:
 
-- **FEINTSIGNAL COMMAND**: `fs-command-post`, `fs-watchlist`, `fs-operator-notes`
+- **FEINTSIGNAL COMMAND**: `fs-command-center`, `fs-watchlist`, `fs-operator-notes`
 - **FEINTSIGNAL OPS**: `fs-heartbeat-log`, `fs-system-status`, `fs-agent-runs`, `fs-error-log`, `fs-cost-control`
 - **FEINTSIGNAL ALERTS**: `fs-breaking-alerts`, `fs-critical-alerts`
 - **FEINTSIGNAL INTEL**: `fs-daily-brief`, `fs-sitrep`, `fs-bias-framing`

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "_note": "Balanced keyless RSS defaults. Perspective buckets support coverage diversity and are not article-level ideology or reliability judgments.",
+  "default_per_source_limit": 8,
+  "sources": [
+    {
+      "id": "guardian_world",
+      "name": "The Guardian World",
+      "feed_url": "https://www.theguardian.com/world/rss",
+      "enabled": true,
+      "perspective_bucket": "left",
+      "source_type": "major_media",
+      "country_of_origin": "United Kingdom",
+      "independence_group": "guardian-media-group",
+      "default_category": "geopolitics",
+      "reliability_score": 78
+    },
+    {
+      "id": "bbc_world",
+      "name": "BBC World",
+      "feed_url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "enabled": true,
+      "perspective_bucket": "center",
+      "source_type": "international_media",
+      "country_of_origin": "United Kingdom",
+      "independence_group": "bbc",
+      "default_category": "geopolitics",
+      "reliability_score": 78
+    },
+    {
+      "id": "fox_world",
+      "name": "Fox News World",
+      "feed_url": "https://moxie.foxnews.com/google-publisher/world.xml",
+      "enabled": true,
+      "perspective_bucket": "right",
+      "source_type": "major_media",
+      "country_of_origin": "United States",
+      "independence_group": "fox-news-media",
+      "default_category": "geopolitics",
+      "reliability_score": 78
+    },
+    {
+      "id": "al_jazeera",
+      "name": "Al Jazeera",
+      "feed_url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "enabled": true,
+      "perspective_bucket": "international",
+      "source_type": "international_media",
+      "country_of_origin": "Qatar",
+      "independence_group": "al-jazeera-media-network",
+      "default_category": "geopolitics",
+      "reliability_score": 78
+    },
+    {
+      "id": "un_news",
+      "name": "UN News",
+      "feed_url": "https://news.un.org/feed/subscribe/en/news/all/rss.xml",
+      "enabled": true,
+      "perspective_bucket": "official",
+      "source_type": "official",
+      "country_of_origin": "Multinational",
+      "independence_group": "united-nations",
+      "default_category": "geopolitics",
+      "reliability_score": 85
+    },
+    {
+      "id": "reliefweb",
+      "name": "ReliefWeb Updates",
+      "feed_url": "https://reliefweb.int/updates/rss.xml",
+      "enabled": true,
+      "perspective_bucket": "specialist",
+      "source_type": "specialist",
+      "country_of_origin": "Multinational",
+      "independence_group": "reliefweb-ocha",
+      "default_category": "disaster",
+      "reliability_score": 78
+    },
+    {
+      "id": "bleepingcomputer",
+      "name": "BleepingComputer",
+      "feed_url": "https://www.bleepingcomputer.com/feed/",
+      "enabled": true,
+      "perspective_bucket": "specialist",
+      "source_type": "specialist",
+      "country_of_origin": "United States",
+      "independence_group": "bleepingcomputer",
+      "default_category": "cyber",
+      "reliability_score": 78
+    }
+  ]
+}

@@ -22,7 +22,7 @@ SQLite + JSON config + mock/live source adapters
 
 ## Agent pipeline
 
-1. `collector_agent`: mock collection today; approved live adapters later.
+1. `collector_agent`: mock collection by default; allowlisted, keyless RSS collection behind the live-research gate.
 2. `normalizer_agent`: fields, timestamps, and geographic centroids.
 3. `source_validator`: reliability, independence, and official-source checks.
 4. `deduper`: duplicate/noise suppression.
