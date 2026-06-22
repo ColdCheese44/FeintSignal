@@ -122,10 +122,13 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <button className="present-launch" onClick={() => setPresent(true)} title="Full-screen second-screen view">
-        ▶ Present
-      </button>
-      <TopStatusBar feintcon={feintcon} heartbeat={heartbeat} onRunNow={runNow} running={running} />
+      <TopStatusBar
+        feintcon={feintcon}
+        heartbeat={heartbeat}
+        onRunNow={runNow}
+        running={running}
+        onPresent={() => setPresent(true)}
+      />
 
       {error && (
         <div style={{ background: "var(--band-critical)", color: "#fff", padding: "6px 16px", fontSize: 13 }}>

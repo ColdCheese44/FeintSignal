@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { FeintEvent, FeintconStatus, PerspectiveAnalysis } from "../../lib/types";
 import { api } from "../../lib/api";
 import { feintconColor, hostname, leanColor, primarySource, relativeTime, signalBand } from "../../lib/formatters";
@@ -24,8 +24,14 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
   const [persp, setPersp] = useState<PerspectiveAnalysis | null>(null);
   const [perspLoading, setPerspLoading] = useState(false);
   const cache = useRef<Map<string, PerspectiveAnalysis>>(new Map());
+  const stageRef = useRef<HTMLElement>(null);
+  const fitRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
 
   const current = stories[index] ?? null;
+  const count = Math.max(1, stories.length);
+  const next = () => setIndex((i) => (i + 1) % count);
+  const prev = () => setIndex((i) => (i - 1 + count) % count);
 
   useEffect(() => {
     if (index >= stories.length && stories.length > 0) setIndex(0);
@@ -86,11 +92,32 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
     return "No distinct framing in the current evidence set.";
   }
 
+  // Scale the current article so it always fits the screen without scrolling.
+  useLayoutEffect(() => {
+    function fit() {
+      const stage = stageRef.current;
+      const content = fitRef.current;
+      if (!stage || !content) return;
+      const style = window.getComputedStyle(stage);
+      const padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+      const avail = stage.clientHeight - padding;
+      const natural = content.scrollHeight;
+      setScale(natural > avail && natural > 0 ? Math.max(0.4, avail / natural) : 1);
+    }
+    fit();
+    const t = window.setTimeout(fit, 80);
+    window.addEventListener("resize", fit);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("resize", fit);
+    };
+  }, [current?.id, persp, perspLoading, stories.length]);
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onExit();
-      else if (e.key === "ArrowRight") setIndex((i) => (i + 1) % Math.max(1, stories.length));
-      else if (e.key === "ArrowLeft") setIndex((i) => (i - 1 + stories.length) % Math.max(1, stories.length));
+      else if (e.key === "ArrowRight") next();
+      else if (e.key === "ArrowLeft") prev();
       else if (e.key === " ") {
         e.preventDefault();
         setPaused((p) => !p);
@@ -114,12 +141,19 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
         )}
         <div className="present-spacer" />
         <span className="present-clock">{now.toLocaleTimeString()}</span>
+        <button className="btn" onClick={prev} aria-label="Previous story">‹ Prev</button>
+        <button className="btn" onClick={next} aria-label="Next story">Next ›</button>
         <button className="btn" onClick={() => setPaused((p) => !p)}>{paused ? "Play" : "Pause"}</button>
         <button className="btn" onClick={onExit} aria-label="Exit presentation">Exit ✕</button>
       </header>
 
       {current ? (
-        <main className="present-stage">
+        <main className="present-stage" ref={stageRef}>
+          <div
+            className="present-fit"
+            ref={fitRef}
+            style={{ transform: scale < 1 ? `scale(${scale})` : undefined, transformOrigin: "top center" }}
+          >
           <div className="present-counter">{index + 1} / {stories.length} · top signals</div>
           <div className="present-meta">
             {band && (
@@ -157,6 +191,7 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
           )}
           <div className="present-progress" key={index}>
             <span style={{ animationDuration: `${ROTATE_MS}ms`, animationPlayState: paused ? "paused" : "running" }} />
+          </div>
           </div>
         </main>
       ) : (
