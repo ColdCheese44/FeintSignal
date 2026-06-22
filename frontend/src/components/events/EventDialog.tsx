@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { FeintEvent } from "../../lib/types";
 import { api } from "../../lib/api";
-import { relativeTime } from "../../lib/formatters";
+import { hostname, primarySource, relativeTime } from "../../lib/formatters";
+import { ArticleView } from "./ArticleView";
 import { ScorePanel } from "./ScorePanel";
 import { SourcePanel } from "./SourcePanel";
-import { BiasPanel } from "./BiasPanel";
 
 interface Props {
   event: FeintEvent;
@@ -51,16 +51,25 @@ export function EventDialog({ event, onClose, onChanged }: Props) {
           <span>· {event.category}</span>
           <span>· {relativeTime(event.published_at)}</span>
           <span>· status: <strong>{event.status}</strong></span>
+          {(() => {
+            const src = primarySource(event);
+            return src ? (
+              <a className="open-article" href={src.url} target="_blank" rel="noreferrer">
+                Open original article ↗ {hostname(src.url) && <span className="muted">({hostname(src.url)})</span>}
+              </a>
+            ) : null;
+          })()}
         </div>
 
-        <p style={{ lineHeight: 1.5 }}>{event.summary}</p>
+        <ArticleView event={event} />
 
-        <div className="dialog-grid">
-          <ScorePanel event={event} />
-          <BiasPanel event={event} />
-        </div>
-
-        <SourcePanel sources={event.sources} />
+        <details className="analyst-details">
+          <summary>Analyst detail — scoring &amp; sources</summary>
+          <div className="dialog-grid">
+            <ScorePanel event={event} />
+            <SourcePanel sources={event.sources} />
+          </div>
+        </details>
 
         <div className="panel">
           <h2>Operator</h2>

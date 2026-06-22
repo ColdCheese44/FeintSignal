@@ -13,6 +13,7 @@ import { TopStatusBar } from "./components/layout/TopStatusBar";
 import { LeftRail } from "./components/layout/LeftRail";
 import { MainDashboard } from "./components/layout/MainDashboard";
 import { BottomToolDrawer } from "./components/layout/BottomToolDrawer";
+import { PresentationMode } from "./components/layout/PresentationMode";
 import { EventDialog } from "./components/events/EventDialog";
 
 export default function App() {
@@ -31,6 +32,9 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [present, setPresent] = useState(
+    () => new URLSearchParams(window.location.search).get("present") === "1"
+  );
 
   const refresh = useCallback(async () => {
     try {
@@ -112,8 +116,15 @@ export default function App() {
     return <div className="loading">Connecting to FeintSignal backend at {api.base}…</div>;
   }
 
+  if (present) {
+    return <PresentationMode events={events} feintcon={feintcon} onExit={() => setPresent(false)} />;
+  }
+
   return (
     <div className="app-shell">
+      <button className="present-launch" onClick={() => setPresent(true)} title="Full-screen second-screen view">
+        ▶ Present
+      </button>
       <TopStatusBar feintcon={feintcon} heartbeat={heartbeat} onRunNow={runNow} running={running} />
 
       {error && (

@@ -164,6 +164,18 @@ export interface PerspectiveAnalysis {
   method: string;
   ai_generated?: boolean;
   evidence_citations?: { id: string; label: string; url: string }[];
+  primary_url?: string | null;
+}
+
+export interface GeneratePerspectiveResponse {
+  perspective: PerspectiveAnalysis;
+  llm_analysis?: {
+    requested: boolean;
+    provider?: string | null;
+    model?: string | null;
+    status: string;
+    reason?: string;
+  };
 }
 
 export interface DiscordChannelStatus {
