@@ -46,7 +46,6 @@ def discord_status():
             {
                 "event_id": a["event_id"],
                 "alert_level": a["alert_level"],
-                "requires_human_review": bool(a["requires_human_review"]),
                 "sent": bool(a["sent"]),
             }
             for a in event_service.list_alerts()

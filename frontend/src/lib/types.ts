@@ -57,7 +57,6 @@ export interface FeintEvent {
   is_stale: boolean;
   social_only: boolean;
   sensational: boolean;
-  requires_human_review: boolean;
   alert_level: AlertLevel;
 
   political_framing?: PoliticalFraming;
@@ -119,7 +118,6 @@ export interface TopSignal {
   region: string;
   category: string;
   signal_score: number;
-  requires_human_review: boolean;
 }
 
 export interface Briefing {
@@ -131,7 +129,6 @@ export interface Briefing {
   summary: string;
   top_signals: TopSignal[];
   events_by_region: Record<string, number>;
-  human_review_queue: { id: string; title: string }[];
   perspective_analysis: PerspectiveAnalysis[];
   intelligence_method: string;
   disclaimer: string;
@@ -161,7 +158,6 @@ export interface DiscordStatus {
   pending_alerts: {
     event_id: string;
     alert_level: string;
-    requires_human_review: boolean;
     sent: boolean;
   }[];
 }

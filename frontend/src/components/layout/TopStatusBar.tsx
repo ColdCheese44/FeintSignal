@@ -32,7 +32,6 @@ export function TopStatusBar({ feintcon, heartbeat, onRunNow, running }: Props) 
       <GatePill label="LIVE RESEARCH" on={!!gates.live_research} />
       <GatePill label="LLM" on={!!gates.llm} />
       <GatePill label="DISCORD SEND" on={!!gates.discord_send} />
-      <GatePill label="HUMAN REVIEW" on={!!gates.human_review_for_critical} forceOnGood />
 
       <button className="btn primary" onClick={onRunNow} disabled={running}>
         {running ? "Running…" : "Run pipeline now"}
@@ -41,7 +40,7 @@ export function TopStatusBar({ feintcon, heartbeat, onRunNow, running }: Props) 
   );
 }
 
-function GatePill({ label, on, forceOnGood }: { label: string; on: boolean; forceOnGood?: boolean }) {
-  const cls = on ? (forceOnGood ? "off" : "on") : forceOnGood ? "on" : "off";
+function GatePill({ label, on }: { label: string; on: boolean }) {
+  const cls = on ? "on" : "off";
   return <span className={`gate-pill ${cls}`}>{label}: {on ? "ON" : "OFF"}</span>;
 }

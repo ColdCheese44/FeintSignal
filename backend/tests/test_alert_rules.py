@@ -1,9 +1,9 @@
-"""Tests for alert routing and human-review gating."""
+"""Tests for direct signal-threshold alert routing."""
 from backend.agents.alert_router import evaluate_alert
 
 
-def _src(**o):
-    base = {
+def _src(**overrides):
+    source = {
         "name": "Src",
         "url": "https://example.org/s",
         "published_at": "2026-06-21T00:00:00Z",
@@ -13,11 +13,11 @@ def _src(**o):
         "country_of_origin": "X",
         "independence_group": "a",
     }
-    base.update(o)
-    return base
+    source.update(overrides)
+    return source
 
 
-def test_standard_alert_no_review_for_neutral_category():
+def test_standard_alert_routes_to_breaking():
     event = {
         "id": "s1",
         "title": "Federal budget standoff",
@@ -31,10 +31,11 @@ def test_standard_alert_no_review_for_neutral_category():
     }
     decision = evaluate_alert(event)
     assert decision["alert_level"] == "standard"
-    assert decision["requires_human_review"] is False
+    assert decision["route"] == "breaking"
+    assert decision["channel"] == "fs-breaking-alerts"
 
 
-def test_critical_conflict_requires_human_review():
+def test_critical_conflict_routes_directly_to_critical():
     event = {
         "id": "c1",
         "title": "Cross-border strikes along contested frontier",
@@ -51,4 +52,5 @@ def test_critical_conflict_requires_human_review():
     }
     decision = evaluate_alert(event)
     assert decision["alert_level"] == "critical"
-    assert decision["requires_human_review"] is True
+    assert decision["route"] == "critical"
+    assert decision["channel"] == "fs-critical-alerts"

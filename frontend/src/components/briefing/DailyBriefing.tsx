@@ -31,23 +31,9 @@ export function DailyBriefing({ briefing, onSelectEvent }: Props) {
           onClick={() => onSelectEvent(s.id)}
         >
           <span>{s.title.slice(0, 42)}{s.title.length > 42 ? "…" : ""}</span>
-          <span>{s.signal_score.toFixed(0)}{s.requires_human_review ? " ⚠" : ""}</span>
+          <span>{s.signal_score.toFixed(0)}</span>
         </div>
       ))}
-
-      {briefing.human_review_queue.length > 0 && (
-        <div style={{ marginTop: 8 }}>
-          <h3 style={{ fontSize: 11, color: "var(--band-critical)", textTransform: "uppercase", letterSpacing: 1 }}>
-            Review queue ({briefing.human_review_queue.length})
-          </h3>
-          {briefing.human_review_queue.map((q) => (
-            <div key={q.id} className="kv" style={{ cursor: "pointer" }} onClick={() => onSelectEvent(q.id)}>
-              <span>{q.title.slice(0, 46)}</span>
-              <span>⚠</span>
-            </div>
-          ))}
-        </div>
-      )}
 
       {briefing.perspective_analysis?.length > 0 && (
         <div className="perspective-brief">

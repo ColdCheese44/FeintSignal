@@ -85,7 +85,6 @@ class Event(BaseModel):
     is_stale: bool = False
     social_only: bool = False
     sensational: bool = False
-    requires_human_review: bool = False
     alert_level: str = "none"
 
 

@@ -19,7 +19,6 @@ export function LeftRail({ events, regionFilter, onRegionFilter, categoryFilter,
     byCategory.set(event.category, (byCategory.get(event.category) ?? 0) + 1);
   }
 
-  const reviewCount = events.filter((event) => event.requires_human_review).length;
   const dupCount = events.filter((event) => event.is_duplicate).length;
 
   return (
@@ -42,7 +41,6 @@ export function LeftRail({ events, regionFilter, onRegionFilter, categoryFilter,
               <span>All regions</span>
               <span className="count">{events.filter((event) => !event.is_duplicate).length}</span>
             </button>
-            <div className="rail-summary"><span>Awaiting review</span><span className="count">{reviewCount}</span></div>
             <div className="rail-summary"><span>Suppressed dupes</span><span className="count">{dupCount}</span></div>
           </div>
 

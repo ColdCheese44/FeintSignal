@@ -33,7 +33,6 @@ def build_heartbeat(last_run: Optional[dict] = None, feintcon_level: Optional[in
             "live_research": settings.enable_live_research,
             "llm": settings.enable_llm,
             "discord_send": settings.enable_discord_send,
-            "human_review_for_critical": settings.require_human_review_for_critical,
         },
         "update_interval_minutes": settings.update_interval_minutes,
     }

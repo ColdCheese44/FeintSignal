@@ -362,7 +362,6 @@ a { color: var(--accent-bright); }
   border-radius: 3px;
   font-weight: 600;
 }
-.flag.review { background: rgba(229,72,77,0.15); color: var(--band-critical); border: 1px solid var(--band-critical); }
 .flag.dup { background: rgba(92,102,112,0.2); color: var(--text-1); border: 1px solid var(--text-2); }
 .flag.stale { background: rgba(224,163,23,0.12); color: var(--band-high); border: 1px solid var(--band-high); }
 .flag.conflict { background: rgba(232,89,12,0.15); color: var(--feintcon-2); border: 1px solid var(--feintcon-2); }

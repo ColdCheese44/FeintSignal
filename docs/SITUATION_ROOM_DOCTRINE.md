@@ -2,7 +2,7 @@
 
 ## Mission
 
-FeintSignal maintains awareness of major world events for a human operator. It should explain what is happening, how confident the evidence is, how political audiences frame it, and what requires review. It is not a military command system.
+FeintSignal maintains private awareness of major world events. It should explain what is happening, how confident the evidence is, and how political audiences frame it. It is not a military command system.
 
 ## Intelligence cycle
 
@@ -11,8 +11,8 @@ FeintSignal maintains awareness of major world events for a human operator. It s
 3. **Processing**: normalize time, geography, source identity, political lean, and independence groups.
 4. **Validation**: assess reliability, corroboration, staleness, conflicts, sensationalism, and duplicates.
 5. **Analysis**: score importance, test alternative explanations, identify contested language, and separate confirmed facts from uncertainty.
-6. **Dissemination**: present globe markers, dossiers, briefings, and gated Discord alerts.
-7. **Feedback**: operator notes, review decisions, and watchlist changes inform the next cycle.
+6. **Dissemination**: present globe markers, dossiers, briefings, and threshold-qualified Discord alerts.
+7. **Feedback**: operator notes and watchlist changes inform the next cycle.
 
 ## Analytic strategies
 
@@ -21,7 +21,7 @@ FeintSignal maintains awareness of major world events for a human operator. It s
 - **Evidence tiers**: distinguish official, major media, local, specialist, academic, NGO, social, and unknown sources.
 - **Confidence calibration**: signal importance and factual confidence are separate measurements.
 - **Indicators and warnings**: track escalation, geographic spread, infrastructure, supply chains, and humanitarian effects.
-- **Alternative hypotheses**: keep conflicting reports visible and attribution review-gated.
+- **Alternative hypotheses**: keep conflicting reports and uncertain attribution visible.
 - **Bias without false balance**: document viewpoint coverage without forcing evidence into artificial symmetry.
 - **Correlation discipline**: globe arcs show shared categories, never causal conclusions.
 
@@ -31,4 +31,4 @@ The scheduler may refresh the deterministic pipeline hourly. Manual and schedule
 
 ## Discord posture
 
-Discord is the mobile dissemination layer. Webhooks handle outbound operations today; channel IDs and bot credentials are reserved for future interactive commands and acknowledgements. Human-review messages use `fs-human-review`; reviewed critical alerts use `fs-critical-alerts`.
+Discord is the mobile dissemination layer. Webhooks handle outbound operations today; channel IDs and bot credentials are reserved for future interactive commands. Standard alerts use `fs-breaking-alerts`; critical alerts use `fs-critical-alerts`.

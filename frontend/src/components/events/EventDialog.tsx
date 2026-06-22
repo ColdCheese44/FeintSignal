@@ -53,16 +53,6 @@ export function EventDialog({ event, onClose, onChanged }: Props) {
           <span>· status: <strong>{event.status}</strong></span>
         </div>
 
-        {event.requires_human_review && (
-          <div className="panel" style={{ borderColor: "var(--band-critical)" }}>
-            <strong style={{ color: "var(--band-critical)" }}>⚠ Human review required</strong>
-            <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-              This claim type (e.g. conflict/escalation, attribution, outbreak, social-primary, or any
-              critical alert) must be reviewed before escalation to alert channels. The human-review queue may receive a gated notice.
-            </div>
-          </div>
-        )}
-
         <p style={{ lineHeight: 1.5 }}>{event.summary}</p>
 
         <div className="dialog-grid">

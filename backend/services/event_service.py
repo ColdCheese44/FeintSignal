@@ -52,7 +52,7 @@ def persist_run(
                 float(ev.get("confidence_score", 0) or 0),
                 float(ev.get("feintcon_impact", 0) or 0),
                 ev.get("alert_level", "none"),
-                1 if ev.get("requires_human_review") else 0,
+                0,
                 1 if ev.get("is_duplicate") else 0,
                 status,
                 ev.get("published_at"),
@@ -87,7 +87,7 @@ def persist_run(
                     now,
                     alert.get("alert_level"),
                     alert.get("channel"),
-                    1 if alert.get("requires_human_review") else 0,
+                    0,
                     1 if alert.get("sent") else 0,
                     json.dumps(alert.get("payload", {})),
                 ),
@@ -231,7 +231,7 @@ def list_alerts() -> List[dict]:
     conn = database.get_connection()
     try:
         rows = conn.execute(
-            "SELECT event_id, created_at, alert_level, channel, requires_human_review, sent, payload FROM alerts ORDER BY id DESC"
+            "SELECT event_id, created_at, alert_level, channel, sent, payload FROM alerts ORDER BY id DESC"
         ).fetchall()
         out = []
         for r in rows:

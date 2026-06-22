@@ -41,7 +41,7 @@ export function DiscordStatusPanel({ status, onTest }: Props) {
       </div>
       <div className="drawer-actions">
         <button className="btn" onClick={test} disabled={testing}>{testing ? "Testing..." : "Dry-run status payload"}</button>
-        <span>{testResult ?? `${status?.pending_alerts.filter((alert) => alert.requires_human_review).length ?? 0} review`}</span>
+        <span>{testResult ?? `${status?.pending_alerts.filter((alert) => !alert.sent).length ?? 0} pending`}</span>
       </div>
     </div>
   );

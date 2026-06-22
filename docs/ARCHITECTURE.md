@@ -28,7 +28,7 @@ SQLite + JSON config + mock/live source adapters
 4. `deduper`: duplicate/noise suppression.
 5. `signal_scorer`: deterministic importance and confidence scoring.
 6. `feintcon_agent`: internal readiness posture.
-7. `alert_router`: standard, critical, and human-review routing.
+7. `alert_router`: direct standard and critical alert routing.
 8. `perspective_agent`: evidence-bound viewpoint, consensus, and uncertainty analysis.
 9. `briefing_agent`: digestible daily intelligence report.
 10. `heartbeat_agent`: agent and capability posture.
@@ -39,12 +39,12 @@ The in-process scheduler exposes status, start, and stop APIs, prevents overlapp
 
 ## Discord
 
-The JSON command-center config is the source of truth for 37 channels. Ten webhook routes are active in the MVP. The pipeline can dispatch eligible alerts, heartbeats, agent summaries, safe error reports, and at most one successful daily briefing per briefing date. Every network call still requires `ENABLE_DISCORD_SEND=true` and the matching webhook.
+The JSON command-center config is the source of truth for 32 channels. Nine webhook routes are active in the MVP. The pipeline can dispatch eligible alerts, heartbeats, agent summaries, safe error reports, and at most one successful daily briefing per briefing date. Every network call still requires `ENABLE_DISCORD_SEND=true` and the matching webhook.
 
 ## Safety boundaries
 
 - Live research, LLM calls, in-process scheduling, and Discord delivery default off.
-- Critical or sensitive claims remain human-review gated.
+- Alerts require deterministic score, confidence, source-quality, corroboration, duplicate, and freshness checks.
 - Webhook URLs and API keys never appear in API responses or logs.
 - FEINTCON is not official DEFCON.
 - Globe correlation arcs do not claim causation.

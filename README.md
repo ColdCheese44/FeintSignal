@@ -28,7 +28,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - duplicate/noise suppression
 - FEINTCON calculation
 - Discord alert payload generation with default-off delivery
-- Watchtower Discord command-center routing for 37 operational channels
+- Watchtower Discord command-center routing for 32 operational channels
 - gated Discord dispatch for alerts, heartbeats, agent runs, errors, and once-daily briefings
 - React/Vite/TypeScript dashboard shell
 - globe-first tabbed workspace with an offline-capable interactive 3D globe, collapsible navigation, and collapsible system tools

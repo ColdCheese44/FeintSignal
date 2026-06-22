@@ -40,10 +40,13 @@ def test_config_loads_all_command_center_channels():
     loaded = load_discord_config()
     channels = loaded["channels"]
     assert loaded["bot_name"] == "Watchtower"
-    assert len(channels) == 37
-    assert len({item["channel_name"] for item in channels}) == 37
+    assert len(channels) == 32
+    assert len({item["channel_name"] for item in channels}) == 32
     assert all(item["channel_id_env_var"] for item in channels)
-    assert len({item["channel_id_env_var"] for item in channels}) == 37
+    assert len({item["channel_id_env_var"] for item in channels}) == 32
+    assert "human_review" not in loaded["routes"]
+    removed = {"fs-human-review", "fs-escalated", "fs-source-review", "fs-research-queue", "fs-monitoring"}
+    assert not removed & {item["channel_name"] for item in channels}
     assert all(item["enabled_by_default"] is False for item in channels)
     assert route_channel("heartbeat")["channel_name"] == "fs-heartbeat-log"
 
@@ -62,23 +65,10 @@ def test_all_configured_environment_fields_exist_in_example():
     assert "DISCORD_BOT_NAME" in keys
 
 
-def test_critical_alert_routes_to_critical_when_review_gate_is_off(monkeypatch):
-    monkeypatch.setenv("REQUIRE_HUMAN_REVIEW_FOR_CRITICAL", "false")
-    config_module._settings = None
+def test_critical_alert_routes_directly_to_critical():
     decision = alert_router.evaluate_alert(_critical_event())
     assert decision["alert_level"] == "critical"
-    assert decision["requires_human_review"] is False
     assert decision["channel"] == "fs-critical-alerts"
-    config_module._settings = None
-
-
-def test_review_gated_critical_routes_to_human_review(monkeypatch):
-    monkeypatch.setenv("REQUIRE_HUMAN_REVIEW_FOR_CRITICAL", "true")
-    config_module._settings = None
-    decision = alert_router.evaluate_alert(_critical_event("conflict"))
-    assert decision["requires_human_review"] is True
-    assert decision["channel"] == "fs-human-review"
-    config_module._settings = None
 
 
 def test_discord_send_remains_disabled_by_default(monkeypatch):

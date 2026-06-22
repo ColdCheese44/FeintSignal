@@ -8,10 +8,10 @@ The planned FeintSignal Discord bot is named **Watchtower**. Its name is configu
 
 Create these categories and text channels in order:
 
-- **FEINTSIGNAL COMMAND**: `fs-command-post`, `fs-human-review`, `fs-watchlist`, `fs-operator-notes`
+- **FEINTSIGNAL COMMAND**: `fs-command-post`, `fs-watchlist`, `fs-operator-notes`
 - **FEINTSIGNAL OPS**: `fs-heartbeat-log`, `fs-system-status`, `fs-agent-runs`, `fs-error-log`, `fs-cost-control`
-- **FEINTSIGNAL ALERTS**: `fs-breaking-alerts`, `fs-critical-alerts`, `fs-monitoring`, `fs-escalated`
-- **FEINTSIGNAL INTEL**: `fs-daily-brief`, `fs-sitrep`, `fs-source-review`, `fs-bias-framing`, `fs-research-queue`
+- **FEINTSIGNAL ALERTS**: `fs-breaking-alerts`, `fs-critical-alerts`
+- **FEINTSIGNAL INTEL**: `fs-daily-brief`, `fs-sitrep`, `fs-bias-framing`
 - **FEINTSIGNAL REGIONS**: `fs-global`, `fs-north-america`, `fs-latin-america`, `fs-europe`, `fs-middle-east`, `fs-africa`, `fs-asia-pacific`
 - **FEINTSIGNAL DOMAINS**: `fs-cyber`, `fs-conflict`, `fs-politics`, `fs-economy`, `fs-energy-supplychain`, `fs-disasters-health`, `fs-organized-crime`, `fs-terrorism`, `fs-tech-ai`
 - **FEINTSIGNAL DEV/BOT**: `fs-bot-errors`, `fs-raw-logs`, `fs-dev-notes`
@@ -20,7 +20,7 @@ The machine-readable copy, purposes, environment-variable names, and future ID f
 
 ## Webhooks needed now
 
-Create webhooks only for these ten channels:
+Create webhooks only for these nine channels:
 
 | Channel | Local `.env` variable |
 | --- | --- |
@@ -31,7 +31,6 @@ Create webhooks only for these ten channels:
 | `fs-cost-control` | `DISCORD_WEBHOOK_COST_CONTROL` |
 | `fs-breaking-alerts` | `DISCORD_WEBHOOK_BREAKING` |
 | `fs-critical-alerts` | `DISCORD_WEBHOOK_CRITICAL` |
-| `fs-human-review` | `DISCORD_WEBHOOK_HUMAN_REVIEW` |
 | `fs-daily-brief` | `DISCORD_WEBHOOK_DAILY_BRIEF` |
 | `fs-sitrep` | `DISCORD_WEBHOOK_SITREP` |
 
@@ -52,8 +51,7 @@ Never paste webhook URLs into JSON, docs, screenshots, issues, commits, or chat.
 - Heartbeats route to `fs-heartbeat-log`; service status routes to `fs-system-status`.
 - Agent summaries, errors, and cost warnings route to their matching OPS channels.
 - Standard alerts route to `fs-breaking-alerts`.
-- Critical alerts route to `fs-critical-alerts` only after they pass review policy.
-- Review-gated critical claims route to `fs-human-review` and remain marked `requires_human_review`.
+- Critical alerts route directly to `fs-critical-alerts` after meeting the corroboration and score thresholds.
 - Daily briefings and situation reports route to `fs-daily-brief` and `fs-sitrep`.
 - Payload generation never sends by itself.
 - A send requires both the global enable flag and the matching webhook.
@@ -62,11 +60,11 @@ Never paste webhook URLs into JSON, docs, screenshots, issues, commits, or chat.
 - The daily briefing route sends at most once per briefing date after a successful delivery.
 - Scheduler failures generate a safe error payload for `fs-error-log`, still subject to the same gates.
 
-Generate a safe test payload with `POST /discord/test`. It defaults to dry-run mode. `GET /discord/status` reports only booleans and channel names, never URLs. The dashboard Discord panel shows all ten routes and exposes the same dry-run test.
+Generate a safe test payload with `POST /discord/test`. It defaults to dry-run mode. `GET /discord/status` reports only booleans and channel names, never URLs. The dashboard Discord panel shows all nine routes and exposes the same dry-run test.
 
 ## Channel IDs later
 
-The `.env.example` file contains one `DISCORD_SERVER_ID` field, all ten `DISCORD_WEBHOOK_*` fields, and a unique `DISCORD_CHANNEL_*` field for every one of the 37 channels. The channel IDs are grouped by the same seven Discord categories used by the server. Populate them when the full Discord bot is implemented; the webhook MVP does not read channel IDs.
+The `.env.example` file contains one `DISCORD_SERVER_ID` field, all nine `DISCORD_WEBHOOK_*` fields, and a unique `DISCORD_CHANNEL_*` field for every one of the 32 channels. The channel IDs are grouped by the same seven Discord categories used by the server. Populate them when the full Discord bot is implemented; the webhook MVP does not read channel IDs.
 
 For a future bot, also add `DISCORD_SERVER_ID`, `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `DISCORD_BOT_TOKEN` locally. Do not obtain or configure a bot token yet unless bot commands are being built.
 

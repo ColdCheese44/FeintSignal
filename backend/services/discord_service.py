@@ -106,7 +106,7 @@ def build_daily_briefing_payload(briefing: dict) -> Dict[str, object]:
         str(briefing.get("summary", "")),
         [
             {"name": "Top signals", "value": "\n".join(lines)[:1024] or "No active signals.", "inline": False},
-            {"name": "Review queue", "value": str(len(briefing.get("human_review_queue") or [])), "inline": True},
+            {"name": "Active signals", "value": str(len(briefing.get("top_signals") or [])), "inline": True},
         ],
         0x4F9FE0,
     )
@@ -161,15 +161,13 @@ def send(payload: Dict[str, object], channel: str = "breaking") -> Dict[str, obj
     channel_name = target["channel_name"]
     if not settings.enable_discord_send:
         return {"sent": False, "reason": "discord_send_disabled", "channel": channel_name}
-    if payload.get("requires_human_review") and target["id"] != route_channel("human_review")["id"]:
-        return {"sent": False, "reason": "awaiting_human_review", "channel": channel_name}
     webhook = _webhook_for(target["id"])
     if not webhook:
         return {"sent": False, "reason": "webhook_not_configured", "channel": channel_name}
     try:
         import httpx
 
-        body = {k: v for k, v in payload.items() if k not in {"route", "channel", "requires_human_review"}}
+        body = {k: v for k, v in payload.items() if k not in {"route", "channel"}}
         response = httpx.post(webhook, json=body, timeout=10.0)
         return {"sent": response.status_code < 300, "status_code": response.status_code, "channel": channel_name}
     except Exception as exc:  # pragma: no cover - network path is disabled in tests

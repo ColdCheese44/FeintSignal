@@ -34,7 +34,6 @@ export function EventCard({ event, onClick }: Props) {
             {event.alert_level.toUpperCase()} ALERT
           </span>
         )}
-        {event.requires_human_review && <span className="flag review">REVIEW</span>}
         {event.conflicting_reports && <span className="flag conflict">CONFLICTING</span>}
         {event.is_stale && <span className="flag stale">STALE</span>}
         {event.is_duplicate && <span className="flag dup">DUPLICATE</span>}

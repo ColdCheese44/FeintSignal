@@ -19,7 +19,6 @@ def test_dispatch_routes_alerts_and_operational_payloads(monkeypatch):
         "briefing_date": "2026-06-22",
         "summary": "Daily summary.",
         "top_signals": [],
-        "human_review_queue": [],
     }
     run = {"trigger": "test", "status": "ok", "events_processed": 1, "alerts_generated": 1, "duplicates": 0}
     result = discord_service.dispatch_pipeline([alert], briefing, run, {"level": 3})

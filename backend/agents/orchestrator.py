@@ -27,7 +27,7 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
     scored = signal_scorer.score_events(deduped)
 
     feintcon = feintcon_agent.compute_feintcon(scored)
-    alerts = alert_router.route_alerts(scored)  # mutates scored: sets alert_level/requires_human_review
+    alerts = alert_router.route_alerts(scored)  # mutates scored: sets alert_level
     briefing = briefing_agent.generate_briefing(scored, feintcon)
 
     finished_at = now_iso()

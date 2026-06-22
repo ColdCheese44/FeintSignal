@@ -39,22 +39,10 @@ distinct regions are in focus (see `backend/agents/feintcon_agent.py`).
 - Conflicting reports reduce signal rather than inflate it.
 - Stale information decays.
 
-## Human review before critical alerts
+## Alert qualification
 
-Even when an alert qualifies, the following claim types **must** be reviewed by a
-human operator before any Discord send:
-
-- war-start / escalation claims
-- terrorism claims
-- mass-casualty claims
-- cyberattack attribution
-- election-interference claims
-- disease-outbreak claims
-- nuclear / strategic-weapon claims
-- assassination / coup claims
-- social-media-primary claims
-- anything likely to cause panic if wrong
-
-With `REQUIRE_HUMAN_REVIEW_FOR_CRITICAL=true` (the default), **all** critical
-alerts are additionally gated behind human review. This is a safety-first posture:
-the system is designed to under-alert rather than spread an unverified claim.
+FeintSignal is a private news-awareness system. Alerts are routed automatically
+after meeting deterministic score, confidence, source-quality, corroboration,
+duplicate, and freshness thresholds. Standard alerts go to `fs-breaking-alerts`;
+critical alerts go directly to `fs-critical-alerts`. Discord delivery still
+requires the explicit global send gate and the matching webhook.

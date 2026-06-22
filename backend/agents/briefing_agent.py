@@ -1,9 +1,4 @@
-"""Daily briefing generator.
-
-Produces a deterministic, template-based briefing from scored events and the
-FEINTCON status. No LLM is used (ENABLE_LLM=false by default); the structure is
-LLM-upgradeable later behind that gate.
-"""
+"""Deterministic daily briefing generator."""
 from __future__ import annotations
 
 from typing import Dict, List
@@ -14,35 +9,30 @@ from .perspective_agent import analyze_events
 
 
 def _top_signals(events: List[dict], limit: int = 5) -> List[dict]:
-    active = [e for e in events if not e.get("is_duplicate")]
-    ordered = sorted(active, key=lambda e: float(e.get("signal_score", 0)), reverse=True)
+    active = [event for event in events if not event.get("is_duplicate")]
+    ordered = sorted(active, key=lambda event: float(event.get("signal_score", 0)), reverse=True)
     return [
         {
-            "id": e.get("id"),
-            "title": e.get("title"),
-            "region": e.get("region"),
-            "category": e.get("category"),
-            "signal_score": e.get("signal_score"),
-            "requires_human_review": e.get("requires_human_review", False),
+            "id": event.get("id"),
+            "title": event.get("title"),
+            "region": event.get("region"),
+            "category": event.get("category"),
+            "signal_score": event.get("signal_score"),
         }
-        for e in ordered[:limit]
+        for event in ordered[:limit]
     ]
 
 
 def generate_briefing(events: List[dict], feintcon: Dict[str, object]) -> Dict[str, object]:
-    active = [e for e in events if not e.get("is_duplicate")]
+    active = [event for event in events if not event.get("is_duplicate")]
     by_region: Dict[str, int] = {}
-    for e in active:
-        by_region[e.get("region", "unknown")] = by_region.get(e.get("region", "unknown"), 0) + 1
-
-    review_queue = [
-        {"id": e.get("id"), "title": e.get("title")}
-        for e in active
-        if e.get("requires_human_review") and e.get("alert_level") in ("standard", "critical")
-    ]
+    for event in active:
+        region = event.get("region", "unknown")
+        by_region[region] = by_region.get(region, 0) + 1
 
     top = _top_signals(active)
     headline = top[0]["title"] if top else "No notable signals."
+    alert_count = sum(event.get("alert_level") in ("standard", "critical") for event in active)
 
     return {
         "briefing_date": now_utc().date().isoformat(),
@@ -51,13 +41,12 @@ def generate_briefing(events: List[dict], feintcon: Dict[str, object]) -> Dict[s
         "feintcon_label": feintcon.get("label"),
         "headline": headline,
         "summary": (
-            f"FEINTCON {feintcon.get('level')} — {feintcon.get('label')}. "
+            f"FEINTCON {feintcon.get('level')} - {feintcon.get('label')}. "
             f"{len(active)} active signals across {len(by_region)} regions. "
-            f"{len(review_queue)} item(s) awaiting human review."
+            f"{alert_count} alert-qualified item(s)."
         ),
         "top_signals": top,
         "events_by_region": by_region,
-        "human_review_queue": review_queue,
         "perspective_analysis": analyze_events(active),
         "intelligence_method": (
             "Multi-source deterministic synthesis. Political framing is attributed, uncertainty is explicit, "

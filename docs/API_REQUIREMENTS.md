@@ -4,7 +4,7 @@
 
 The local MVP needs no paid data or AI API. It runs on bundled mock data.
 
-For Discord delivery, create the ten channel webhooks listed in `DISCORD_SETUP.md`. Webhook URLs are Discord credentials even though they are not conventional API keys. Store them only in local `.env`.
+For Discord delivery, create the nine channel webhooks listed in `DISCORD_SETUP.md`. Webhook URLs are Discord credentials even though they are not conventional API keys. Store them only in local `.env`.
 
 ## Obtain only when enabling the feature
 
@@ -14,5 +14,5 @@ For Discord delivery, create the ten channel webhooks listed in `DISCORD_SETUP.m
 
 ## Always required locally
 
-- Discord server and channel IDs are identifiers, not API credentials. They are optional for the current webhook MVP and have organized placeholders in `.env.example` for the future bot phase.
+- Discord server and 32 channel IDs are identifiers, not API credentials. They are optional for the current webhook MVP and have organized placeholders in `.env.example` for the future bot phase.
 - Keep all capability gates false until the corresponding integration is implemented and tested.

@@ -55,9 +55,6 @@ class Settings:
     llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", ""))
 
     enable_discord_send: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_SEND"), False))
-    require_human_review_for_critical: bool = field(
-        default_factory=lambda: _as_bool(os.getenv("REQUIRE_HUMAN_REVIEW_FOR_CRITICAL"), True)
-    )
 
     update_interval_minutes: int = field(default_factory=lambda: _as_int(os.getenv("UPDATE_INTERVAL_MINUTES"), 60))
     enable_scheduler: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_SCHEDULER"), False))
@@ -96,7 +93,6 @@ class Settings:
             "enable_llm": self.enable_llm,
             "llm_provider": self.llm_provider or None,
             "enable_discord_send": self.enable_discord_send,
-            "require_human_review_for_critical": self.require_human_review_for_critical,
             "update_interval_minutes": self.update_interval_minutes,
             "enable_scheduler": self.enable_scheduler,
             "max_events_per_run": self.max_events_per_run,
