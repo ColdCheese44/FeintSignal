@@ -22,6 +22,7 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
   const [paused, setPaused] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const [persp, setPersp] = useState<PerspectiveAnalysis | null>(null);
+  const [perspLoading, setPerspLoading] = useState(false);
   const cache = useRef<Map<string, PerspectiveAnalysis>>(new Map());
 
   const current = stories[index] ?? null;
@@ -49,9 +50,11 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
     const cached = cache.current.get(current.id);
     if (cached) {
       setPersp(cached);
+      setPerspLoading(false);
       return;
     }
     setPersp(null);
+    setPerspLoading(true);
     let active = true;
     api
       .perspective(current.id)
@@ -59,12 +62,29 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
         if (!active) return;
         cache.current.set(current.id, p);
         setPersp(p);
+        setPerspLoading(false);
       })
-      .catch(() => active && setPersp(null));
+      .catch(() => {
+        if (!active) return;
+        setPersp(null);
+        setPerspLoading(false);
+      });
     return () => {
       active = false;
     };
   }, [current?.id]);
+
+  // Column text: show loading only while fetching; otherwise fall back to the
+  // event's own framing, then a neutral default — never a stuck "Loading…".
+  const framing = current?.political_framing;
+  function colText(value?: string, fallback?: string): string {
+    if (perspLoading) return "Loading neutral analysis…";
+    const v = (value || "").trim();
+    if (v) return v;
+    const f = (fallback || "").trim();
+    if (f) return f;
+    return "No distinct framing in the current evidence set.";
+  }
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -119,15 +139,15 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
           <div className="present-cols">
             <div className="present-col" style={{ borderTopColor: leanColor("left") }}>
               <h3 style={{ color: leanColor("left") }}>What the Left says</h3>
-              <p>{persp?.what_the_left_says ?? "Loading neutral analysis…"}</p>
+              <p>{colText(persp?.what_the_left_says, framing?.left_frame)}</p>
             </div>
             <div className="present-col" style={{ borderTopColor: leanColor("center") }}>
               <h3 style={{ color: leanColor("center") }}>What the Center says</h3>
-              <p>{persp?.what_the_center_says ?? "Loading neutral analysis…"}</p>
+              <p>{colText(persp?.what_the_center_says)}</p>
             </div>
             <div className="present-col" style={{ borderTopColor: leanColor("right") }}>
               <h3 style={{ color: leanColor("right") }}>What the Right says</h3>
-              <p>{persp?.what_the_right_says ?? "Loading neutral analysis…"}</p>
+              <p>{colText(persp?.what_the_right_says, framing?.right_frame)}</p>
             </div>
           </div>
           {src && (

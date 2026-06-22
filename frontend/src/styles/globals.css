@@ -678,7 +678,7 @@ a { color: var(--accent-bright); }
 @keyframes present-fill { from { width: 0; } to { width: 100%; } }
 
 .present-ticker { border-top: 1px solid var(--border); overflow: hidden; background: var(--bg-1); padding: 12px 0; }
-.present-ticker-track { display: inline-flex; gap: 48px; white-space: nowrap; animation: present-scroll 70s linear infinite; padding-left: 100%; }
+.present-ticker-track { display: inline-flex; gap: 48px; white-space: nowrap; animation: present-scroll 140s linear infinite; padding-left: 100%; }
 .present-ticker-item { font-size: 16px; color: var(--text-1); }
 .present-ticker-item b { font-family: var(--mono); margin-right: 6px; }
 @keyframes present-scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
