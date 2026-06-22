@@ -39,6 +39,7 @@ def _critical_event(category: str = "politics") -> dict:
 def test_config_loads_all_command_center_channels():
     loaded = load_discord_config()
     channels = loaded["channels"]
+    assert loaded["bot_name"] == "Watchtower"
     assert len(channels) == 37
     assert len({item["channel_name"] for item in channels}) == 37
     assert all(item["channel_id_env_var"] for item in channels)
@@ -58,6 +59,7 @@ def test_all_configured_environment_fields_exist_in_example():
     for item in loaded["channels"]:
         expected.update(value for value in (item.get("env_var"), item.get("channel_id_env_var")) if value)
     assert expected <= keys
+    assert "DISCORD_BOT_NAME" in keys
 
 
 def test_critical_alert_routes_to_critical_when_review_gate_is_off(monkeypatch):

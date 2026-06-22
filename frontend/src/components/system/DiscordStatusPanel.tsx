@@ -26,7 +26,7 @@ export function DiscordStatusPanel({ status, onTest }: Props) {
 
   return (
     <div className="drawer-cell">
-      <h4>Discord command center</h4>
+      <h4>Watchtower / Discord command center</h4>
       <div className="kv">
         <span>Sending</span>
         <span><span className={`dot ${status?.enable_discord_send ? "on" : "off"}`} />{status?.enable_discord_send ? "ENABLED" : "SAFE / OFF"}</span>

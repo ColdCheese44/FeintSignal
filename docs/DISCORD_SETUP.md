@@ -2,6 +2,8 @@
 
 Discord is the mobile alert layer for FeintSignal. The current MVP sends outbound webhook payloads only. It does not require a Discord bot, server ID, or channel IDs, and sending remains disabled until `ENABLE_DISCORD_SEND=true` and the selected webhook is configured.
 
+The planned FeintSignal Discord bot is named **Watchtower**. Its name is configured now, but the bot runtime and interactive commands remain disabled until the application credentials are added and that phase is implemented.
+
 ## Server creation checklist
 
 Create these categories and text channels in order:

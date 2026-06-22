@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "_note": "Discord command-center routing. Store real IDs and webhook URLs only in .env; never put secrets in this file.",
+  "bot_name": "Watchtower",
   "send_enabled_env_var": "ENABLE_DISCORD_SEND",
   "server_id_env_var": "DISCORD_SERVER_ID",
   "default_send_enabled": false,

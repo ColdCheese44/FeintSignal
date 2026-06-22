@@ -27,6 +27,7 @@ export default function App() {
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [selected, setSelected] = useState<FeintEvent | null>(null);
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -121,13 +122,15 @@ export default function App() {
         </div>
       )}
 
-      <div className="app-body">
+      <div className={`app-body ${leftCollapsed ? "rail-collapsed" : ""}`}>
         <LeftRail
           events={events}
           regionFilter={regionFilter}
           onRegionFilter={setRegionFilter}
           categoryFilter={categoryFilter}
           onCategoryFilter={setCategoryFilter}
+          collapsed={leftCollapsed}
+          onCollapsed={setLeftCollapsed}
         />
         <MainDashboard
           events={filtered}

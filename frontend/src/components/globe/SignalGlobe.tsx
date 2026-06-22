@@ -80,8 +80,8 @@ export function SignalGlobe({ events, onSelect, selectedId, showCorrelations = t
     if (!hostRef.current) return;
     const observer = new ResizeObserver(([entry]) => {
       const width = Math.max(320, entry.contentRect.width);
-      const viewportBudget = Math.max(300, window.innerHeight - 420);
-      setSize({ width, height: Math.min(570, width * 0.62, viewportBudget) });
+      const height = Math.max(360, entry.contentRect.height);
+      setSize({ width, height });
     });
     observer.observe(hostRef.current);
     return () => observer.disconnect();
