@@ -1,8 +1,8 @@
 """FeintSignal FastAPI application.
 
 Local-first intelligence dashboard backend. On startup it ensures the database
-exists and, if empty, runs the mock pipeline once so the UI has data immediately.
-No external services are contacted; all capability gates default to OFF.
+exists and, if empty, runs the configured pipeline once so the UI has data.
+External services remain independently capability-gated.
 """
 from __future__ import annotations
 

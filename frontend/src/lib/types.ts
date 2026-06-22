@@ -131,6 +131,16 @@ export interface Briefing {
   events_by_region: Record<string, number>;
   perspective_analysis: PerspectiveAnalysis[];
   intelligence_method: string;
+  llm_analysis?: {
+    requested: boolean;
+    provider?: string | null;
+    model?: string | null;
+    status: string;
+    events_requested?: number;
+    events_enriched?: number;
+    usage?: { input_tokens: number; output_tokens: number };
+    reason?: string;
+  };
   disclaimer: string;
 }
 
@@ -145,6 +155,8 @@ export interface PerspectiveAnalysis {
   uncertainties: string[];
   source_balance: Record<string, number>;
   method: string;
+  ai_generated?: boolean;
+  evidence_citations?: { id: string; label: string; url: string }[];
 }
 
 export interface DiscordChannelStatus {
@@ -154,6 +166,13 @@ export interface DiscordChannelStatus {
 
 export interface DiscordStatus {
   enable_discord_send: boolean;
+  bot?: {
+    name: string;
+    identity_configured: boolean;
+    server_configured: boolean;
+    channel_ids_configured: number;
+    runtime: string;
+  };
   channels: Record<string, DiscordChannelStatus>;
   pending_alerts: {
     event_id: string;

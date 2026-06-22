@@ -1,8 +1,17 @@
 # FeintSignal Command Center
 
-Discord is the mobile alert layer for FeintSignal. The current MVP sends outbound webhook payloads only. It does not require a Discord bot, server ID, or channel IDs, and sending remains disabled until `ENABLE_DISCORD_SEND=true` and the selected webhook is configured.
+Discord is the mobile alert layer for FeintSignal. The current runtime sends outbound webhook payloads only. Watchtower's bot identity, server, and channel IDs are configured for the next interactive phase, while sending remains disabled until `ENABLE_DISCORD_SEND=true` and the selected webhook is configured.
 
-The planned FeintSignal Discord bot is named **Watchtower**. Its name is configured now, but the bot runtime and interactive commands remain disabled until the application credentials are added and that phase is implemented.
+The FeintSignal Discord bot is named **Watchtower**. Its credentials and channel access are configured, but a Discord Gateway process and interactive commands are intentionally not started yet.
+
+## Recommended Watchtower permissions
+
+For an informational text bot, keep the role narrowly scoped:
+
+- Required: **View Channels**, **Send Messages**, **Embed Links**, **Read Message History**, and **Use Slash Commands**.
+- Optional: **Attach Files** for future reports and **Add Reactions** for lightweight controls.
+- Enable thread permissions only when a thread-based feature is implemented.
+- Remove TTS, voice, soundboard, embedded activities, polls, external emoji/sticker, server-insight, moderation, role, channel-management, and webhook-management permissions. They are not used by FeintSignal.
 
 ## Server creation checklist
 
@@ -62,10 +71,10 @@ Never paste webhook URLs into JSON, docs, screenshots, issues, commits, or chat.
 
 Generate a safe test payload with `POST /discord/test`. It defaults to dry-run mode. `GET /discord/status` reports only booleans and channel names, never URLs. The dashboard Discord panel shows all nine routes and exposes the same dry-run test.
 
-## Channel IDs later
+## Bot identity and channel IDs
 
-The `.env.example` file contains one `DISCORD_SERVER_ID` field, all nine `DISCORD_WEBHOOK_*` fields, and a unique `DISCORD_CHANNEL_*` field for every one of the 32 channels. The channel IDs are grouped by the same seven Discord categories used by the server. Populate them when the full Discord bot is implemented; the webhook MVP does not read channel IDs.
+The `.env.example` file contains one `DISCORD_SERVER_ID` field, all nine `DISCORD_WEBHOOK_*` fields, and a unique `DISCORD_CHANNEL_*` field for every one of the 32 channels. The local `.env` now has these identifiers populated. The status API reports configuration counts only and never returns the values.
 
-For a future bot, also add `DISCORD_SERVER_ID`, `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `DISCORD_BOT_TOKEN` locally. Do not obtain or configure a bot token yet unless bot commands are being built.
+`DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `DISCORD_BOT_TOKEN` are also configured locally. They remain unused by the webhook sender until the interactive Watchtower runtime is implemented.
 
 Suggested bot identities: **FS Watchtower**, **FS Heartbeat**, **FS Briefing**, **FS Alert Router**, and **FS Analyst**.

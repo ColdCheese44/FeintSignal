@@ -34,6 +34,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - globe-first tabbed workspace with an offline-capable interactive 3D globe, collapsible navigation, and collapsible system tools
 - balanced keyless RSS collection across left, center, right, international, official, and specialist source buckets
 - neutral perspective dossiers with left, center, right, consensus, and uncertainty sections
+- evidence-bound Anthropic/OpenAI synthesis with source links, bounded usage, and deterministic fallback
 - supervised hourly scheduler with overlap protection and dashboard controls
 - mock current affairs data
 - pytest backend test suite
@@ -45,7 +46,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 
 ```text
 pytest backend/tests -q
-27 passed
+34 passed
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).
@@ -67,6 +68,9 @@ POST /discord/test                 (sent:false — sending disabled by default)
 
 frontend npm run build
 tsc + vite build succeeded (dist/ emitted)
+
+npm audit
+0 vulnerabilities
 ```
 
 ## Safety posture
@@ -74,7 +78,7 @@ tsc + vite build succeeded (dist/ emitted)
 - `.env` is ignored.
 - `.env.example` contains placeholders only.
 - Live research is disabled by default.
-- LLM calls are disabled by default.
+- LLM calls are disabled in the template and remain bounded when enabled locally.
 - Discord send is disabled by default.
 - FEINTCON is explicitly internal and not official DEFCON.
 
@@ -102,6 +106,12 @@ Tests:
 
 ```powershell
 pytest backend/tests -q
+```
+
+Secret-safe integration check:
+
+```powershell
+python scripts/check_integrations.py --live
 ```
 
 Desktop launcher:

@@ -9,13 +9,15 @@
 - Discord command-center routing and gated dispatch for alerts, operations, errors, and daily briefings.
 - Full-screen desktop launcher and chromeless dashboard window.
 - Allowlisted, keyless RSS collection with balanced source buckets, per-feed limits, and provenance capture.
+- Anthropic and OpenAI briefing adapters with strict evidence packets, bounded usage, source citations, and deterministic fallback.
+- Secret-safe live integration diagnostics for both AI providers and Watchtower's server/channel access.
 
 Do not run both hourly supervision modes at once. Use the dashboard scheduler while the backend remains open, or install the Windows scheduled updater for machine-level supervision.
 
 ## Next priorities
 
-1. An LLM provider adapter behind `ENABLE_LLM=false`, requiring citations to collected evidence and preserving deterministic fallback output.
-2. Frontend automated tests for filters, dossiers, scheduler controls, and Discord dry runs.
+1. Frontend automated tests for filters, dossiers, scheduler controls, and Discord dry runs.
+2. Watchtower Gateway runtime and informational slash commands for status, briefing, region, and domain queries.
 3. Agent-run timeline with per-agent duration, retry state, and failure detail.
 4. Markdown/PDF briefing export and a configurable daily delivery time.
 

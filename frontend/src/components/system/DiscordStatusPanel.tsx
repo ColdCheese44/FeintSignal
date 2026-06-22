@@ -31,6 +31,13 @@ export function DiscordStatusPanel({ status, onTest }: Props) {
         <span>Sending</span>
         <span><span className={`dot ${status?.enable_discord_send ? "on" : "off"}`} />{status?.enable_discord_send ? "ENABLED" : "SAFE / OFF"}</span>
       </div>
+      {status?.bot && (
+        <div className="kv">
+          <span>{status.bot.name} identity</span>
+          <span>{status.bot.identity_configured && status.bot.server_configured ? "READY" : "INCOMPLETE"}</span>
+        </div>
+      )}
+      {status?.bot && <div className="kv"><span>Channel IDs</span><span>{status.bot.channel_ids_configured}</span></div>}
       <div className="kv"><span>Webhook routes</span><span>{configured} / {routes.length}</span></div>
       <div className="discord-route-list">
         {routes.map(([route, channel]) => (

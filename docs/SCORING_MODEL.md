@@ -69,4 +69,4 @@ penalties [no penalties] -> signal 81.86
 - **Critical**: `signal >= 85` AND `confidence >= 75` AND (two independent sources
   OR one official source), not duplicate, not stale.
 
-See INTELLIGENCE_DOCTRINE.md for the human-review rules that gate critical sends.
+See INTELLIGENCE_DOCTRINE.md for source doctrine, uncertainty handling, and automatic alert routing.

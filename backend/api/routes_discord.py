@@ -41,6 +41,15 @@ def discord_status():
     settings = get_settings()
     return {
         "enable_discord_send": settings.enable_discord_send,
+        "bot": {
+            "name": settings.discord_bot_name,
+            "identity_configured": all(settings.secret_configured(name) for name in (
+                "DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY", "DISCORD_BOT_TOKEN"
+            )),
+            "server_configured": settings.secret_configured("DISCORD_SERVER_ID"),
+            "channel_ids_configured": settings.discord_channel_id_count(),
+            "runtime": "webhook_outbound_only",
+        },
         "channels": discord_service.safe_channel_status(),
         "pending_alerts": [
             {

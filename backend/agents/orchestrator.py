@@ -29,6 +29,9 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
     feintcon = feintcon_agent.compute_feintcon(scored)
     alerts = alert_router.route_alerts(scored)  # mutates scored: sets alert_level
     briefing = briefing_agent.generate_briefing(scored, feintcon)
+    from ..services import llm_service
+
+    briefing = llm_service.enrich_briefing(briefing, scored)
 
     finished_at = now_iso()
     duplicates = sum(1 for e in scored if e.get("is_duplicate"))
