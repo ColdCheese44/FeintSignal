@@ -1,7 +1,7 @@
 # FeintSignal Launcher
 
 A native **Windows desktop control panel** (WPF) for FeintSignal. It launches the backend
-(FastAPI) and frontend (Vite) **silently in the background**, opens the dashboard as a chromeless
+(FastAPI) and frontend (Vite) **silently in the background**, opens the dashboard as a Brave fullscreen
 app window, runs the pipeline, and shows live status — no terminal required.
 
 Mirrors the FeintTrade / FeintSupplyCo launcher convention.
@@ -16,13 +16,14 @@ npm run install-launcher
 
 That creates two Desktop + Start Menu shortcuts:
 - **FeintSignal** — the control panel ([`fs-app.ps1`](fs-app.ps1)): buttons + live status.
-- **FeintSignal Dashboard** — opens the dashboard straight into a **chromeless app window**, starting the backend + frontend silently if needed ([`fs-terminal.ps1`](fs-terminal.ps1)).
+- **FeintSignal Dashboard** — opens the dashboard straight into a **Brave fullscreen app window**, starting the backend + frontend silently if needed ([`fs-terminal.ps1`](fs-terminal.ps1)).
 
 To launch without shortcuts:
 
 ```powershell
 npm run app        # control panel
-npm run terminal   # dashboard as a chromeless app window
+npm run terminal   # dashboard in Brave fullscreen
+npm run browser:test
 ```
 
 ## What the control panel does
@@ -39,6 +40,21 @@ npm run terminal   # dashboard as a chromeless app window
 - The frontend dev server is started in a **hidden** PowerShell (`-WindowStyle Hidden`) with redirected logs.
 - The desktop shortcut runs PowerShell **`-STA -WindowStyle Hidden`**, so only the app window shows.
 - "Run" buttons (Seed / Pipeline / Tests) intentionally open a **visible** window so you can watch output.
+
+### Browser launch behavior
+
+- URL-opening launcher actions prefer Brave with `--new-window --start-fullscreen`.
+- The dashboard keeps a dedicated app-window profile under `%LOCALAPPDATA%\FeintSignalTerminal`.
+- If Brave is unavailable, the helper logs a warning and falls back to the default browser.
+- Optional overrides: `FEINT_BROWSER_PATH`, `FEINT_BROWSER`, and `FEINT_BROWSER_MODE`.
+- Supported modes: `fullscreen` (default), `maximized`, `normal`, and explicit `kiosk`.
+
+Example:
+
+```powershell
+$env:FEINT_BROWSER_MODE="fullscreen"
+$env:FEINT_BROWSER_PATH="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+```
 
 ## Background automation (always-on)
 

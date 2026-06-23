@@ -1,7 +1,7 @@
 <#
   Installs Desktop + Start Menu shortcuts for the FeintSignal launcher.
     - "FeintSignal"           -> the WPF control panel (fs-app.ps1), launched hidden/-STA.
-    - "FeintSignal Dashboard" -> opens the dashboard as a chromeless app window (fs-terminal.ps1).
+    - "FeintSignal Dashboard" -> opens the dashboard as a Brave fullscreen app window (fs-terminal.ps1).
 #>
 $ErrorActionPreference = "Stop"
 
@@ -48,9 +48,9 @@ $appArgs = "-ExecutionPolicy Bypass -STA -WindowStyle Hidden -File `"$projectRoo
 New-Shortcut -ShortcutPath (Join-Path $desktopPath "FeintSignal.lnk") -TargetPath $powershellPath -Arguments $appArgs -WorkingDirectory $projectRoot -IconLocation $iconPath -Description "FeintSignal Intelligence Dashboard control panel"
 New-Shortcut -ShortcutPath (Join-Path $startMenuDir "FeintSignal.lnk") -TargetPath $powershellPath -Arguments $appArgs -WorkingDirectory $projectRoot -IconLocation $iconPath -Description "FeintSignal Intelligence Dashboard control panel"
 
-# Dashboard: open straight into the chromeless app window (starts the stack silently).
+# Dashboard: open straight into the Brave fullscreen app window (starts the stack silently).
 $termArgs = "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$projectRoot\launcher\fs-terminal.ps1`""
-New-Shortcut -ShortcutPath (Join-Path $desktopPath "FeintSignal Dashboard.lnk") -TargetPath $powershellPath -Arguments $termArgs -WorkingDirectory $projectRoot -IconLocation $iconPath -Description "Open the FeintSignal dashboard as an app window"
-New-Shortcut -ShortcutPath (Join-Path $startMenuDir "FeintSignal Dashboard.lnk") -TargetPath $powershellPath -Arguments $termArgs -WorkingDirectory $projectRoot -IconLocation $iconPath -Description "Open the FeintSignal dashboard as an app window"
+New-Shortcut -ShortcutPath (Join-Path $desktopPath "FeintSignal Dashboard.lnk") -TargetPath $powershellPath -Arguments $termArgs -WorkingDirectory $projectRoot -IconLocation $iconPath -Description "Open the FeintSignal dashboard in Brave fullscreen"
+New-Shortcut -ShortcutPath (Join-Path $startMenuDir "FeintSignal Dashboard.lnk") -TargetPath $powershellPath -Arguments $termArgs -WorkingDirectory $projectRoot -IconLocation $iconPath -Description "Open the FeintSignal dashboard in Brave fullscreen"
 
-Write-Host "Shortcuts installed: 'FeintSignal' (control panel) and 'FeintSignal Dashboard' (app window) on your Desktop and Start Menu."
+Write-Host "Shortcuts installed: 'FeintSignal' (control panel) and 'FeintSignal Dashboard' (Brave fullscreen app window) on your Desktop and Start Menu."

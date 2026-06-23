@@ -7,7 +7,7 @@
 - Offline-capable 3D globe with category filters, dossiers, alert rings, and correlation arcs.
 - Deterministic perspective analysis with neutral, left, center, right, consensus, and uncertainty sections.
 - Discord command-center routing and gated dispatch for alerts, operations, errors, and daily briefings.
-- Full-screen desktop launcher and chromeless dashboard window.
+- Full-screen desktop launcher and Brave dashboard window.
 - Allowlisted, keyless RSS collection with balanced source buckets, per-feed limits, and provenance capture.
 - Anthropic and OpenAI briefing adapters with strict evidence packets, bounded usage, source citations, and deterministic fallback.
 - Secret-safe live integration diagnostics for both AI providers and Watchtower's server/channel access.

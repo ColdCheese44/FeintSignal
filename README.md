@@ -39,7 +39,7 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - mock current affairs data
 - pytest backend test suite
 - Windows PowerShell run scripts
-- WPF desktop control panel and chromeless dashboard launcher
+- WPF desktop control panel and Brave fullscreen dashboard launcher
 - docs for architecture, scoring, Discord setup, and dashboard design
 
 ## Validation results
@@ -119,7 +119,23 @@ Desktop launcher:
 ```powershell
 npm run install-launcher  # create Desktop and Start Menu shortcuts
 npm run app               # open the WPF control panel
-npm run terminal          # open the dashboard as a desktop app window
+npm run terminal          # open the dashboard in Brave fullscreen
+npm run browser:test      # verify browser launch arguments without opening a browser
+```
+
+Browser launcher defaults:
+
+- Dashboard and URL-opening launcher actions prefer Brave with `--new-window --start-fullscreen`.
+- The dashboard keeps a dedicated app-window profile under `%LOCALAPPDATA%\FeintSignalTerminal`.
+- If Brave is unavailable, launchers warn and fall back to the default browser.
+- Optional environment overrides: `FEINT_BROWSER_PATH`, `FEINT_BROWSER`, and `FEINT_BROWSER_MODE`.
+- Supported modes: `fullscreen` (default), `maximized`, `normal`, and explicit `kiosk`.
+
+Example:
+
+```powershell
+$env:FEINT_BROWSER_MODE="fullscreen"
+$env:FEINT_BROWSER_PATH="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 ```
 
 Discord setup is documented in [docs/DISCORD_SETUP.md](docs/DISCORD_SETUP.md). The exact APIs and credentials to obtain now versus later are listed in [docs/API_REQUIREMENTS.md](docs/API_REQUIREMENTS.md). All real values belong only in local `.env`.
@@ -133,7 +149,7 @@ frontend/  React + Vite + TypeScript tactical dashboard (2D SignalGlobe + 3D-rea
 config/    topics, regions, scoring rules, source taxonomy, channels, watchlists, UI
 data/      mock_events.json, mock_sources.json (the SQLite DB is generated, not tracked)
 scripts/   PowerShell run scripts + seed/hourly Python entry points
-launcher/  WPF control panel, dashboard app-window launcher, icon, and shortcut installer
+launcher/  WPF control panel, Brave fullscreen browser helper, dashboard launcher, icon, and shortcut installer
 docs/      architecture, doctrine, scoring, Discord/API setup, dashboard design, and roadmap
 ```
 
