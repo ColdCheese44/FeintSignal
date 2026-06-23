@@ -194,7 +194,7 @@ def _request_anthropic(prompt: str, settings: Settings, expected_count: int) -> 
         {"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
         {
             "model": settings.anthropic_model,
-            "max_tokens": _clamp(settings.llm_max_output_tokens, 512, 4096),
+            "max_tokens": _clamp(settings.llm_max_output_tokens, 512, 8192),
             "temperature": 0,
             "system": SYSTEM_PROMPT,
             "messages": [{"role": "user", "content": prompt}],
@@ -232,7 +232,7 @@ def _request_openai(prompt: str, settings: Settings, expected_count: int) -> Tup
             "model": settings.openai_model,
             "instructions": SYSTEM_PROMPT,
             "input": prompt,
-            "max_output_tokens": _clamp(settings.llm_max_output_tokens, 512, 4096),
+            "max_output_tokens": _clamp(settings.llm_max_output_tokens, 512, 8192),
             "text": {"format": {"type": "json_schema", "name": "feintsignal_analysis", "strict": True, "schema": _response_schema(expected_count)}},
         },
         _clamp(settings.llm_timeout_seconds, 10, 120),
@@ -265,7 +265,7 @@ def enrich_briefing(briefing: dict, events: List[dict], settings: Settings | Non
 
     provider = settings.llm_provider
     model = settings.anthropic_model if provider == "anthropic" else settings.openai_model if provider == "openai" else None
-    selected = _active_events(events, _clamp(settings.llm_max_events, 1, 5))
+    selected = _active_events(events, _clamp(settings.llm_max_events, 1, 20))
     status = {
         "requested": True,
         "provider": provider or None,
@@ -285,15 +285,33 @@ def enrich_briefing(briefing: dict, events: List[dict], settings: Settings | Non
         briefing["llm_analysis"] = status
         return briefing
 
-    packets, citation_maps = _evidence_packet(selected)
-    try:
-        result, usage = (
-            _request_anthropic(_user_prompt(packets), settings, len(selected))
-            if provider == "anthropic"
-            else _request_openai(_user_prompt(packets), settings, len(selected))
-        )
-    except Exception as exc:  # Provider failures must never abort the hourly pipeline.
-        reason = str(exc) if isinstance(exc, LLMServiceError) else f"{provider}_internal_{type(exc).__name__}"
+    # Enrich in small chunks so a single large request cannot time out. Each chunk
+    # is one batched call; partial success is preserved rather than discarded.
+    chunk_size = max(1, int(getattr(settings, "llm_chunk_size", 5)))
+    all_analyses: List[dict] = []
+    citation_maps: Dict[str, Dict[str, dict]] = {}
+    usage = {"input_tokens": 0, "output_tokens": 0}
+    chunk_error = None
+    for start in range(0, len(selected), chunk_size):
+        chunk = selected[start:start + chunk_size]
+        packets, chunk_citations = _evidence_packet(chunk)
+        citation_maps.update(chunk_citations)
+        try:
+            result, chunk_usage = (
+                _request_anthropic(_user_prompt(packets), settings, len(chunk))
+                if provider == "anthropic"
+                else _request_openai(_user_prompt(packets), settings, len(chunk))
+            )
+        except Exception as exc:  # Provider failures must never abort the hourly pipeline.
+            chunk_error = str(exc) if isinstance(exc, LLMServiceError) else f"{provider}_internal_{type(exc).__name__}"
+            continue
+        if isinstance(result.get("analyses"), list):
+            all_analyses.extend(result["analyses"])
+        usage["input_tokens"] += int(chunk_usage.get("input_tokens", 0) or 0)
+        usage["output_tokens"] += int(chunk_usage.get("output_tokens", 0) or 0)
+
+    if not all_analyses:
+        reason = chunk_error or f"{provider}_returned_no_valid_analyses"
         status["reason"] = reason
         briefing["llm_analysis"] = status
         briefing["intelligence_method"] = (
@@ -301,6 +319,7 @@ def enrich_briefing(briefing: dict, events: List[dict], settings: Settings | Non
         )
         return briefing
 
+    result = {"analyses": all_analyses}
     allowed_ids = {str(event.get("id")) for event in selected}
     baseline = {str(item.get("event_id")): item for item in briefing.get("perspective_analysis") or []}
     enriched = 0

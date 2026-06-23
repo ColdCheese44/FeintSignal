@@ -48,22 +48,18 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
     return () => clearTimeout(t);
   }, [index, paused, stories.length]);
 
-  // Generate (and cache) the AI Left/Center/Right analysis for one story.
+  // Fetch (and cache) the Left/Center/Right analysis for one story. This is an
+  // instant read — the pipeline pre-bakes the AI analysis for the top stories,
+  // so there is no per-view LLM latency.
   async function ensurePerspective(id: string): Promise<PerspectiveAnalysis | null> {
     const cached = cache.current.get(id);
     if (cached) return cached;
     try {
-      const res = await api.generatePerspective(id);
-      cache.current.set(id, res.perspective);
-      return res.perspective;
+      const p = await api.perspective(id);
+      cache.current.set(id, p);
+      return p;
     } catch {
-      try {
-        const p = await api.perspective(id);
-        cache.current.set(id, p);
-        return p;
-      } catch {
-        return null;
-      }
+      return null;
     }
   }
 

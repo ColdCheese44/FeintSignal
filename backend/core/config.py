@@ -56,8 +56,9 @@ class Settings:
     llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", "").strip().lower())
     anthropic_model: str = field(default_factory=lambda: os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6").strip())
     openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-5-mini").strip())
-    llm_max_events: int = field(default_factory=lambda: _as_int(os.getenv("LLM_MAX_EVENTS"), 3))
-    llm_max_output_tokens: int = field(default_factory=lambda: _as_int(os.getenv("LLM_MAX_OUTPUT_TOKENS"), 1800))
+    llm_max_events: int = field(default_factory=lambda: _as_int(os.getenv("LLM_MAX_EVENTS"), 15))
+    llm_chunk_size: int = field(default_factory=lambda: _as_int(os.getenv("LLM_CHUNK_SIZE"), 5))
+    llm_max_output_tokens: int = field(default_factory=lambda: _as_int(os.getenv("LLM_MAX_OUTPUT_TOKENS"), 6000))
     llm_timeout_seconds: int = field(default_factory=lambda: _as_int(os.getenv("LLM_TIMEOUT_SECONDS"), 45))
 
     enable_discord_send: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_SEND"), False))
@@ -127,7 +128,7 @@ class Settings:
                 else self.openai_model if self.llm_provider == "openai"
                 else None
             ),
-            "llm_max_events": max(1, min(self.llm_max_events, 5)),
+            "llm_max_events": max(1, min(self.llm_max_events, 20)),
             "openai_key_configured": self.secret_configured("OPENAI_API_KEY"),
             "anthropic_key_configured": self.secret_configured("ANTHROPIC_API_KEY"),
             "enable_discord_send": self.enable_discord_send,
