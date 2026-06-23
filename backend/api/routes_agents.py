@@ -29,4 +29,5 @@ def run_now(body: RunNowRequest | None = None):
         "run": result["run"],
         "feintcon_level": result["feintcon"]["level"],
         "alerts_generated": len(result["alerts"]),
+        "discord": result["run"].get("discord", {}),
     }

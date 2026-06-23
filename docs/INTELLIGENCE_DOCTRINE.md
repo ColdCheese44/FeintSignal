@@ -45,4 +45,4 @@ FeintSignal is a private news-awareness system. Alerts are routed automatically
 after meeting deterministic score, confidence, source-quality, corroboration,
 duplicate, and freshness thresholds. Standard alerts go to `fs-breaking-alerts`;
 critical alerts go directly to `fs-critical-alerts`. Discord delivery still
-requires the explicit global send gate and the matching webhook.
+requires the explicit global send gate and a configured webhook or Watchtower bot destination.

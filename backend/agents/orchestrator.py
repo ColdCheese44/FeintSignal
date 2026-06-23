@@ -29,6 +29,9 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
     feintcon = feintcon_agent.compute_feintcon(scored)
     alerts = alert_router.route_alerts(scored)  # mutates scored: sets alert_level
     briefing = briefing_agent.generate_briefing(scored, feintcon)
+    from ..services import llm_service
+
+    briefing = llm_service.enrich_briefing(briefing, scored)
 
     finished_at = now_iso()
     duplicates = sum(1 for e in scored if e.get("is_duplicate"))
@@ -45,7 +48,8 @@ def run_pipeline(trigger: str = "manual", persist: bool = True, data_dir=None) -
 
     from ..services import discord_service
 
-    discord = discord_service.dispatch_pipeline(alerts, briefing, run_record, feintcon)
+    discord = discord_service.dispatch_pipeline(alerts, briefing, run_record, feintcon, events=scored)
+    run_record["discord"] = discord_service.summarize_dispatch(discord)
 
     if persist:
         # Imported here to avoid a heavy import at module load / test time.

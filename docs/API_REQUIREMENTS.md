@@ -1,18 +1,21 @@
 # API and credential requirements
 
-## Obtain now
+## Configured now
 
-The local MVP needs no paid data or AI API. It runs on bundled mock data.
+- **Anthropic**: `ANTHROPIC_API_KEY` is configured and `LLM_PROVIDER=anthropic` selects it for evidence-bound briefing synthesis. The default model is `claude-sonnet-4-6`.
+- **OpenAI**: `OPENAI_API_KEY` is configured and its model catalog authenticates, but generation currently returns `insufficient_quota`. Keep `LLM_PROVIDER=anthropic` until OpenAI API billing or credits are available. The configured OpenAI model is `gpt-5-mini`.
+- **Discord**: Watchtower's application ID, public key, bot token, server ID, all 32 channel IDs, and nine outbound webhook routes are configured locally.
+- **Live news**: the balanced default collector uses keyless RSS feeds, so no news API subscription is required.
 
-For Discord delivery, create the nine channel webhooks listed in `DISCORD_SETUP.md`. Webhook URLs are Discord credentials even though they are not conventional API keys. Store them only in local `.env`.
+All values remain in ignored local `.env`. Run `python scripts/check_integrations.py --live` for a read-only credential, model-catalog, and Discord-access check; the report never prints tokens, IDs, keys, or webhook URLs. Catalog access confirms authentication, not generation quota.
 
-## Obtain only when enabling the feature
+## No additional API required for the next phase
 
-- **One or both LLM provider keys**: `OPENAI_API_KEY` and/or `ANTHROPIC_API_KEY`. A future `dual` mode can use both for failover or cross-model comparison, but the MVP does not call either provider while `ENABLE_LLM=false`, and an LLM adapter is not implemented yet.
-- **Watchtower Discord bot credentials**: application ID, public key, and bot token. These are not needed for webhook-only outbound posting and no bot runtime exists yet.
-- **Live-source credentials**: none are needed for the balanced default RSS collection. The allowlisted feeds are configured in `config/live_sources.json` and remain inactive while `ENABLE_LIVE_RESEARCH=false`.
+The current collection, Anthropic synthesis, dashboard, scheduler, and webhook delivery do not need another credential. Add OpenAI API credits only if OpenAI fallback is desired. Optional paid news/search APIs can be evaluated later only if the keyless source set develops a measurable coverage gap.
 
-## Always required locally
+## Runtime notes
 
-- Discord server and 32 channel IDs are identifiers, not API credentials. They are optional for the current webhook MVP and have organized placeholders in `.env.example` for the future bot phase.
-- Keep all capability gates false until the corresponding integration is implemented and tested.
+- `ENABLE_LLM=true` permits a single bounded provider request over the top `LLM_MAX_EVENTS` signals. Provider failure preserves the deterministic briefing.
+- `ENABLE_LIVE_RESEARCH=true` permits the allowlisted RSS collector.
+- `ENABLE_DISCORD_SEND=false` still prevents all outbound Discord messages. Turn it on only when automatic mobile posting is desired.
+- Watchtower's bot token is used for outbound posts to bot-first channels. A persistent Discord Gateway connection is still deferred until interactive slash commands are implemented.

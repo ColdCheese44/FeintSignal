@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS events (
     confidence_score REAL,
     feintcon_impact REAL,
     alert_level     TEXT,
-    requires_human_review INTEGER DEFAULT 0,
     is_duplicate    INTEGER DEFAULT 0,
     status          TEXT DEFAULT 'new',
     published_at    TEXT,
@@ -72,7 +71,6 @@ CREATE TABLE IF NOT EXISTS alerts (
     created_at    TEXT NOT NULL,
     alert_level   TEXT NOT NULL,
     channel       TEXT,
-    requires_human_review INTEGER DEFAULT 0,
     sent          INTEGER DEFAULT 0,
     payload       TEXT NOT NULL
 );

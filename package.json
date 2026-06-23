@@ -9,6 +9,7 @@
     "frontend:build": "npm --prefix frontend run build",
     "app": "powershell -NoProfile -STA -ExecutionPolicy Bypass -WindowStyle Hidden -File launcher/fs-app.ps1",
     "terminal": "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File launcher/fs-terminal.ps1",
-    "install-launcher": "powershell -NoProfile -ExecutionPolicy Bypass -File launcher/install-shortcut.ps1"
+    "install-launcher": "powershell -NoProfile -ExecutionPolicy Bypass -File launcher/install-shortcut.ps1",
+    "browser:test": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test_feint_browser.ps1"
   }
 }

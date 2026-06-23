@@ -52,7 +52,6 @@ def persist_run(
                 float(ev.get("confidence_score", 0) or 0),
                 float(ev.get("feintcon_impact", 0) or 0),
                 ev.get("alert_level", "none"),
-                0,
                 1 if ev.get("is_duplicate") else 0,
                 status,
                 ev.get("published_at"),
@@ -63,8 +62,8 @@ def persist_run(
                 conn.execute(
                     """UPDATE events SET
                         title=?, category=?, region=?, country=?, lat=?, lon=?, signal_score=?,
-                        confidence_score=?, feintcon_impact=?, alert_level=?, requires_human_review=?,
-                        is_duplicate=?, status=?, published_at=?, updated_at=?, payload=?
+                        confidence_score=?, feintcon_impact=?, alert_level=?, is_duplicate=?,
+                        status=?, published_at=?, updated_at=?, payload=?
                        WHERE id=?""",
                     row + (eid,),
                 )
@@ -72,22 +71,21 @@ def persist_run(
                 conn.execute(
                     """INSERT INTO events
                        (title, category, region, country, lat, lon, signal_score,
-                        confidence_score, feintcon_impact, alert_level, requires_human_review,
-                        is_duplicate, status, published_at, updated_at, payload, id)
-                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                        confidence_score, feintcon_impact, alert_level, is_duplicate,
+                        status, published_at, updated_at, payload, id)
+                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                     row + (eid,),
                 )
         for alert in alerts:
             conn.execute(
                 """INSERT INTO alerts
-                   (event_id, created_at, alert_level, channel, requires_human_review, sent, payload)
-                   VALUES (?,?,?,?,?,?,?)""",
+                   (event_id, created_at, alert_level, channel, sent, payload)
+                   VALUES (?,?,?,?,?,?)""",
                 (
                     alert.get("event_id"),
                     now,
                     alert.get("alert_level"),
                     alert.get("channel"),
-                    0,
                     1 if alert.get("sent") else 0,
                     json.dumps(alert.get("payload", {})),
                 ),

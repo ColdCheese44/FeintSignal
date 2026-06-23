@@ -1,7 +1,7 @@
 """Score-threshold alert routing and Discord payload generation.
 
 Building a payload never sends it. Delivery remains disabled unless
-ENABLE_DISCORD_SEND=true and the matching webhook is configured.
+ENABLE_DISCORD_SEND=true and a webhook or Watchtower bot destination is configured.
 """
 from __future__ import annotations
 
@@ -105,6 +105,11 @@ def route_alerts(events: List[dict]) -> List[dict]:
                 {
                     **decision,
                     "title": event.get("title"),
+                    "summary": event.get("summary"),
+                    "region": event.get("region"),
+                    "category": event.get("category"),
+                    "signal_score": event.get("signal_score"),
+                    "confidence_score": event.get("confidence_score", event.get("confidence")),
                     "payload": build_payload(event, decision, channel=decision.get("route") or "breaking"),
                 }
             )

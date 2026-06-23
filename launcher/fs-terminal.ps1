@@ -1,5 +1,5 @@
 <#
-  FeintSignal Terminal - opens the dashboard as a chromeless desktop app window (Edge/Chrome --app),
+  FeintSignal Terminal - opens the dashboard as a Brave fullscreen desktop app window,
   the FeintTrade-style shell. Starts the backend (FastAPI) and the frontend (Vite) silently first if
   they are not already running, then waits for the dashboard to come up.
 #>
@@ -13,6 +13,7 @@ $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $Url = "http://localhost:$FrontendPort"
 $LogDir = Join-Path $ProjectRoot "logs"
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+. (Join-Path $PSScriptRoot "feint-browser.ps1")
 
 function Test-Port([int]$Port) {
   try {
@@ -60,25 +61,11 @@ if (-not (Test-Port $BackendPort) -or -not (Test-Port $FrontendPort)) {
   throw "FeintSignal stack did not become ready. Check logs\backend.log and logs\frontend.err.log."
 }
 
-# --- Open as a chromeless app window. Prefer Edge, then Chrome, then default browser. ---
-$candidates = @(
-  (Join-Path $env:ProgramFiles "Microsoft\Edge\Application\msedge.exe"),
-  (Join-Path ${env:ProgramFiles(x86)} "Microsoft\Edge\Application\msedge.exe"),
-  (Join-Path $env:ProgramFiles "Google\Chrome\Application\chrome.exe"),
-  (Join-Path ${env:ProgramFiles(x86)} "Google\Chrome\Application\chrome.exe")
-)
-$browser = $candidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
-
-if ($browser) {
-  # A dedicated user-data-dir gives the app window its own identity and taskbar entry.
-  $profileDir = Join-Path $env:LOCALAPPDATA "FeintSignalTerminal"
-  Start-Process -FilePath $browser -ArgumentList @(
-    "--app=$Url",
-    "--window-size=1480,920",
-    "--user-data-dir=$profileDir"
-  ) | Out-Null
-  Write-Host "FeintSignal dashboard opened ($([System.IO.Path]::GetFileName($browser)) app window) at $Url"
+# --- Open as a dedicated app window. Prefer Brave fullscreen, then default browser. ---
+# A dedicated user-data-dir gives the app window its own identity and taskbar entry.
+$profileDir = Join-Path $env:LOCALAPPDATA "FeintSignalTerminal"
+if (Open-FeintBrowser -Url $Url -AppMode -ProfileDir $profileDir) {
+  Write-Host "FeintSignal dashboard opened in the Feint browser at $Url"
 } else {
-  Start-Process $Url | Out-Null
-  Write-Host "No Edge/Chrome found; opened $Url in the default browser."
+  throw "FeintSignal dashboard could not be opened in a browser."
 }

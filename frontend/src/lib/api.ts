@@ -5,8 +5,10 @@ import type {
   EventsResponse,
   FeintEvent,
   FeintconStatus,
+  GeneratePerspectiveResponse,
   Heartbeat,
   AgentRun,
+  PerspectiveAnalysis,
   SchedulerStatus,
 } from "./types";
 
@@ -38,6 +40,12 @@ export const api = {
     request<{ ok: boolean; event: FeintEvent }>(`/events/${encodeURIComponent(id)}/notes`, {
       method: "POST",
       body: JSON.stringify({ text, author }),
+    }),
+  perspective: (id: string) =>
+    request<PerspectiveAnalysis>(`/events/${encodeURIComponent(id)}/perspective`),
+  generatePerspective: (id: string) =>
+    request<GeneratePerspectiveResponse>(`/events/${encodeURIComponent(id)}/perspective/generate`, {
+      method: "POST",
     }),
   feintcon: () => request<FeintconStatus>("/system/feintcon"),
   heartbeat: () => request<Heartbeat>("/system/heartbeat"),

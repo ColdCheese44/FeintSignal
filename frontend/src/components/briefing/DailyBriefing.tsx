@@ -46,6 +46,19 @@ export function DailyBriefing({ briefing, onSelectEvent }: Props) {
               <Perspective label="What the Center says" text={analysis.what_the_center_says} />
               <Perspective label="What the Right says" text={analysis.what_the_right_says} />
               <Perspective label="Consensus" text={analysis.consensus} />
+              {analysis.evidence_citations && analysis.evidence_citations.length > 0 && (
+                <div className="perspective-block">
+                  <strong>Evidence</strong>
+                  <p>
+                    {analysis.evidence_citations.map((citation, index) => (
+                      <span key={citation.id}>
+                        {index > 0 && " · "}
+                        <a href={citation.url} target="_blank" rel="noreferrer">{citation.label}</a>
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              )}
               <div className="perspective-block uncertainty">
                 <strong>Uncertainties</strong>
                 <ul>{analysis.uncertainties.map((item) => <li key={item}>{item}</li>)}</ul>

@@ -29,23 +29,24 @@ The MVP scaffold is **implemented and committed in this repository** and validat
 - FEINTCON calculation
 - Discord alert payload generation with default-off delivery
 - Watchtower Discord command-center routing for 32 operational channels
-- gated Discord dispatch for alerts, heartbeats, agent runs, errors, and once-daily briefings
+- hybrid webhook/bot dispatch across all 32 destinations with alert deduplication, regional/domain fanout, daily digests, and transport fallback
 - React/Vite/TypeScript dashboard shell
 - globe-first tabbed workspace with an offline-capable interactive 3D globe, collapsible navigation, and collapsible system tools
 - balanced keyless RSS collection across left, center, right, international, official, and specialist source buckets
 - neutral perspective dossiers with left, center, right, consensus, and uncertainty sections
+- evidence-bound Anthropic/OpenAI synthesis with source links, bounded usage, and deterministic fallback
 - supervised hourly scheduler with overlap protection and dashboard controls
 - mock current affairs data
 - pytest backend test suite
 - Windows PowerShell run scripts
-- WPF desktop control panel and chromeless dashboard launcher
+- WPF desktop control panel and Brave fullscreen dashboard launcher
 - docs for architecture, scoring, Discord setup, and dashboard design
 
 ## Validation results
 
 ```text
 pytest backend/tests -q
-27 passed
+42 passed
 
 python scripts/seed_mock_data.py
 Seeded FeintSignal mock data: 11 events, 3 alert payload(s).
@@ -67,6 +68,9 @@ POST /discord/test                 (sent:false — sending disabled by default)
 
 frontend npm run build
 tsc + vite build succeeded (dist/ emitted)
+
+npm audit
+0 vulnerabilities
 ```
 
 ## Safety posture
@@ -74,7 +78,7 @@ tsc + vite build succeeded (dist/ emitted)
 - `.env` is ignored.
 - `.env.example` contains placeholders only.
 - Live research is disabled by default.
-- LLM calls are disabled by default.
+- LLM calls are disabled in the template and remain bounded when enabled locally.
 - Discord send is disabled by default.
 - FEINTCON is explicitly internal and not official DEFCON.
 
@@ -104,12 +108,34 @@ Tests:
 pytest backend/tests -q
 ```
 
+Secret-safe integration check:
+
+```powershell
+python scripts/check_integrations.py --live
+```
+
 Desktop launcher:
 
 ```powershell
 npm run install-launcher  # create Desktop and Start Menu shortcuts
 npm run app               # open the WPF control panel
-npm run terminal          # open the dashboard as a desktop app window
+npm run terminal          # open the dashboard in Brave fullscreen
+npm run browser:test      # verify browser launch arguments without opening a browser
+```
+
+Browser launcher defaults:
+
+- Dashboard and URL-opening launcher actions prefer Brave with `--new-window --start-fullscreen`.
+- The dashboard keeps a dedicated app-window profile under `%LOCALAPPDATA%\FeintSignalTerminal`.
+- If Brave is unavailable, launchers warn and fall back to the default browser.
+- Optional environment overrides: `FEINT_BROWSER_PATH`, `FEINT_BROWSER`, and `FEINT_BROWSER_MODE`.
+- Supported modes: `fullscreen` (default), `maximized`, `normal`, and explicit `kiosk`.
+
+Example:
+
+```powershell
+$env:FEINT_BROWSER_MODE="fullscreen"
+$env:FEINT_BROWSER_PATH="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 ```
 
 Discord setup is documented in [docs/DISCORD_SETUP.md](docs/DISCORD_SETUP.md). The exact APIs and credentials to obtain now versus later are listed in [docs/API_REQUIREMENTS.md](docs/API_REQUIREMENTS.md). All real values belong only in local `.env`.
@@ -123,7 +149,7 @@ frontend/  React + Vite + TypeScript tactical dashboard (2D SignalGlobe + 3D-rea
 config/    topics, regions, scoring rules, source taxonomy, channels, watchlists, UI
 data/      mock_events.json, mock_sources.json (the SQLite DB is generated, not tracked)
 scripts/   PowerShell run scripts + seed/hourly Python entry points
-launcher/  WPF control panel, dashboard app-window launcher, icon, and shortcut installer
+launcher/  WPF control panel, Brave fullscreen browser helper, dashboard launcher, icon, and shortcut installer
 docs/      architecture, doctrine, scoring, Discord/API setup, dashboard design, and roadmap
 ```
 

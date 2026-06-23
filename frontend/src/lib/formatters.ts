@@ -1,4 +1,4 @@
-import type { AlertLevel } from "./types";
+import type { AlertLevel, FeintEvent, Source } from "./types";
 
 export function signalBand(score: number): { id: string; label: string; color: string } {
   if (score >= 85) return { id: "critical", label: "Critical", color: "var(--band-critical)" };
@@ -42,4 +42,29 @@ export function relativeTime(iso?: string | null): string {
 
 export function titleCase(s: string): string {
   return s.replace(/(^|[\s-])\w/g, (m) => m.toUpperCase());
+}
+
+function isHttp(url?: string): boolean {
+  return !!url && (url.startsWith("http://") || url.startsWith("https://"));
+}
+
+/** The best clickable source for an event: highest-reliability source with a valid link. */
+export function primarySource(event: FeintEvent): Source | null {
+  const linked = (event.sources || []).filter((s) => isHttp(s.url));
+  if (linked.length === 0) return null;
+  return [...linked].sort((a, b) => (b.reliability_score || 0) - (a.reliability_score || 0))[0];
+}
+
+export function hostname(url?: string): string {
+  if (!isHttp(url)) return "";
+  try {
+    return new URL(url as string).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+/** Visual identity for a political lean column. */
+export function leanColor(lean: "left" | "center" | "right"): string {
+  return { left: "var(--lean-left)", center: "var(--lean-center)", right: "var(--lean-right)" }[lean];
 }

@@ -31,4 +31,4 @@ The scheduler may refresh the deterministic pipeline hourly. Manual and schedule
 
 ## Discord posture
 
-Discord is the mobile dissemination layer. Webhooks handle outbound operations today; channel IDs and bot credentials are reserved for future interactive commands. Standard alerts use `fs-breaking-alerts`; critical alerts use `fs-critical-alerts`.
+Discord is the mobile dissemination layer. Webhooks handle nine operational routes while Watchtower uses channel IDs for regional, domain, intelligence, and bot outputs. Standard alerts use `fs-breaking-alerts`; critical alerts use `fs-critical-alerts`; both fan out once to relevant regional and domain channels. Bot credentials also remain ready for future interactive commands.

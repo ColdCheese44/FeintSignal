@@ -1,7 +1,7 @@
 <#
   FeintSignal Control Panel - native WPF desktop app for the FeintSignal intelligence dashboard.
   Launches the backend (FastAPI) and frontend (Vite) silently in the background, opens the
-  dashboard as a chromeless app window, runs the pipeline, and shows live status.
+  dashboard as a Brave fullscreen app window, runs the pipeline, and shows live status.
   No external dependencies (uses WPF built into Windows). Falls back to the terminal menu if WPF is unavailable.
 
   Mirrors the FeintTrade / FeintSupplyCo launcher convention.
@@ -22,6 +22,7 @@ $AutostartPs1 = Join-Path $ProjectRoot "scripts\install-autostart.ps1"
 $IconPath = Join-Path $PSScriptRoot "fs.ico"
 $BackendPort = 8765
 $FrontendPort = 5173
+. (Join-Path $PSScriptRoot "feint-browser.ps1")
 
 try {
   Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Xaml
@@ -198,8 +199,8 @@ function Invoke-Component([string]$key) {
       "apidocs" {
         Start-BackendHidden | Out-Null
         for ($i = 0; $i -lt 20; $i++) { if (Test-Port $BackendPort) { break }; Start-Sleep -Milliseconds 300 }
-        Start-Process "http://127.0.0.1:$BackendPort/docs" | Out-Null
-        Set-Output "Opened API docs (/docs)." "ok"
+        $opened = Open-FeintBrowser -Url "http://127.0.0.1:$BackendPort/docs"
+        if ($opened) { Set-Output "Opened API docs in the Feint browser (/docs)." "ok" } else { Set-Output "API docs could not be opened." "err" }
       }
       "install-autostart" {
         $cmd = "Set-Location -LiteralPath '$ProjectRoot'; & '$AutostartPs1' -Install; Write-Host ''; Read-Host 'Press Enter to close'"
@@ -366,7 +367,7 @@ function Add-Section([string]$heading, [array]$buttons) {
 }
 
 Add-Section "Dashboard & Stack" @(
-  (New-ActionButton "Open Dashboard"      "dashboard"      "green"  "Open the dashboard as a chromeless app window (starts backend + frontend silently if needed)"),
+  (New-ActionButton "Open Dashboard"      "dashboard"      "green"  "Open the dashboard as a Brave fullscreen app window (starts backend + frontend silently if needed)"),
   (New-ActionButton "Start Stack"         "start-stack"    "green"  "Start backend + frontend hidden in the background"),
   (New-ActionButton "Start Backend"       "start-backend"  "cyan"   "Start the FastAPI backend hidden (:8765)"),
   (New-ActionButton "Start Frontend"      "start-frontend" "cyan"   "Start the Vite dev server hidden (:5173)"),

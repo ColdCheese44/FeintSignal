@@ -8,6 +8,7 @@ webhook URLs and API keys.
 """
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -52,9 +53,20 @@ class Settings:
 
     enable_live_research: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_LIVE_RESEARCH"), False))
     enable_llm: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_LLM"), False))
-    llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", ""))
+    llm_provider: str = field(default_factory=lambda: os.getenv("LLM_PROVIDER", "").strip().lower())
+    anthropic_model: str = field(default_factory=lambda: os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6").strip())
+    openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-5-mini").strip())
+    llm_max_events: int = field(default_factory=lambda: _as_int(os.getenv("LLM_MAX_EVENTS"), 15))
+    llm_chunk_size: int = field(default_factory=lambda: _as_int(os.getenv("LLM_CHUNK_SIZE"), 5))
+    llm_max_output_tokens: int = field(default_factory=lambda: _as_int(os.getenv("LLM_MAX_OUTPUT_TOKENS"), 6000))
+    llm_timeout_seconds: int = field(default_factory=lambda: _as_int(os.getenv("LLM_TIMEOUT_SECONDS"), 45))
 
     enable_discord_send: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_SEND"), False))
+    discord_bot_name: str = field(default_factory=lambda: os.getenv("DISCORD_BOT_NAME", "Watchtower").strip() or "Watchtower")
+    enable_discord_fanout: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_FANOUT"), False))
+    enable_discord_digests: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_DIGESTS"), False))
+    enable_discord_raw_logs: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_DISCORD_RAW_LOGS"), False))
+    discord_max_fanout_per_run: int = field(default_factory=lambda: _as_int(os.getenv("DISCORD_MAX_FANOUT_PER_RUN"), 24))
 
     update_interval_minutes: int = field(default_factory=lambda: _as_int(os.getenv("UPDATE_INTERVAL_MINUTES"), 60))
     enable_scheduler: bool = field(default_factory=lambda: _as_bool(os.getenv("ENABLE_SCHEDULER"), False))
@@ -83,6 +95,24 @@ class Settings:
 
         return [item["id"] for item in webhook_channels() if self.webhook_configured(item["id"])]
 
+    @staticmethod
+    def secret_configured(name: str) -> bool:
+        """Report whether a secret exists without returning any part of it."""
+        return bool(os.getenv(name, "").strip())
+
+    def llm_provider_ready(self) -> bool:
+        key_names = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
+        key_name = key_names.get(self.llm_provider)
+        return bool(self.enable_llm and key_name and self.secret_configured(key_name))
+
+    def discord_channel_id_count(self) -> int:
+        try:
+            registry = json.loads((self.config_dir / "discord_channels.json").read_text(encoding="utf-8"))
+            names = [item.get("channel_id_env_var") for item in registry.get("channels", [])]
+        except (OSError, json.JSONDecodeError):
+            names = []
+        return sum(1 for name in names if name and os.getenv(name, "").strip())
+
     def safe_summary(self) -> Dict[str, object]:
         """Non-sensitive view of config for the API/UI. No secrets, no URLs."""
         return {
@@ -92,7 +122,20 @@ class Settings:
             "enable_live_research": self.enable_live_research,
             "enable_llm": self.enable_llm,
             "llm_provider": self.llm_provider or None,
+            "llm_provider_ready": self.llm_provider_ready(),
+            "llm_model": (
+                self.anthropic_model if self.llm_provider == "anthropic"
+                else self.openai_model if self.llm_provider == "openai"
+                else None
+            ),
+            "llm_max_events": max(1, min(self.llm_max_events, 20)),
+            "openai_key_configured": self.secret_configured("OPENAI_API_KEY"),
+            "anthropic_key_configured": self.secret_configured("ANTHROPIC_API_KEY"),
             "enable_discord_send": self.enable_discord_send,
+            "enable_discord_fanout": self.enable_discord_fanout,
+            "enable_discord_digests": self.enable_discord_digests,
+            "enable_discord_raw_logs": self.enable_discord_raw_logs,
+            "discord_max_fanout_per_run": max(1, min(self.discord_max_fanout_per_run, 50)),
             "update_interval_minutes": self.update_interval_minutes,
             "enable_scheduler": self.enable_scheduler,
             "max_events_per_run": self.max_events_per_run,

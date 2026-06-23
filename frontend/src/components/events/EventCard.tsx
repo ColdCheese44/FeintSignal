@@ -1,5 +1,5 @@
 import type { FeintEvent } from "../../lib/types";
-import { alertColor, relativeTime, signalBand } from "../../lib/formatters";
+import { alertColor, hostname, primarySource, relativeTime, signalBand } from "../../lib/formatters";
 
 interface Props {
   event: FeintEvent;
@@ -8,6 +8,7 @@ interface Props {
 
 export function EventCard({ event, onClick }: Props) {
   const band = signalBand(event.signal_score);
+  const source = primarySource(event);
   const edge = event.alert_level !== "none" ? alertColor(event.alert_level) : band.color;
 
   return (
@@ -28,6 +29,18 @@ export function EventCard({ event, onClick }: Props) {
         <span>conf {event.confidence_score.toFixed(0)}</span>
       </div>
       <div className="ec-summary">{event.summary}</div>
+      {source && (
+        <a
+          className="ec-source-link"
+          href={source.url}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          title={source.name}
+        >
+          ↗ Read at {hostname(source.url) || source.name}
+        </a>
+      )}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {event.alert_level !== "none" && (
           <span className="flag" style={{ background: alertColor(event.alert_level), color: "#0a0e14" }}>

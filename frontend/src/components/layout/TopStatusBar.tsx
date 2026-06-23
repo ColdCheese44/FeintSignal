@@ -6,9 +6,10 @@ interface Props {
   heartbeat: Heartbeat | null;
   onRunNow: () => void;
   running: boolean;
+  onPresent: () => void;
 }
 
-export function TopStatusBar({ feintcon, heartbeat, onRunNow, running }: Props) {
+export function TopStatusBar({ feintcon, heartbeat, onRunNow, running, onPresent }: Props) {
   const gates = heartbeat?.gates ?? {};
   return (
     <header className="top-bar">
@@ -33,6 +34,9 @@ export function TopStatusBar({ feintcon, heartbeat, onRunNow, running }: Props) 
       <GatePill label="LLM" on={!!gates.llm} />
       <GatePill label="DISCORD SEND" on={!!gates.discord_send} />
 
+      <button className="btn" onClick={onPresent} title="Full-screen second-screen view">
+        ▶ Present
+      </button>
       <button className="btn primary" onClick={onRunNow} disabled={running}>
         {running ? "Running…" : "Run pipeline now"}
       </button>

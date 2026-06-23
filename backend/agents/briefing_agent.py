@@ -1,4 +1,4 @@
-"""Deterministic daily briefing generator."""
+"""Deterministic daily briefing generator and LLM fallback baseline."""
 from __future__ import annotations
 
 from typing import Dict, List
@@ -47,10 +47,10 @@ def generate_briefing(events: List[dict], feintcon: Dict[str, object]) -> Dict[s
         ),
         "top_signals": top,
         "events_by_region": by_region,
-        "perspective_analysis": analyze_events(active),
+        "perspective_analysis": analyze_events(active, limit=15),
         "intelligence_method": (
             "Multi-source deterministic synthesis. Political framing is attributed, uncertainty is explicit, "
-            "and no external AI research is claimed while ENABLE_LLM=false."
+            "and any optional AI enrichment is recorded separately."
         ),
         "disclaimer": DISCLAIMER,
     }

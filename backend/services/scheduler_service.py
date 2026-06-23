@@ -85,7 +85,7 @@ class UpdateScheduler:
             try:
                 from . import discord_service
 
-                discord_service.send(discord_service.build_error_payload(type(exc).__name__, trigger), channel="errors")
+                discord_service.dispatch_error(type(exc).__name__, trigger)
             except Exception:
                 pass
             raise
