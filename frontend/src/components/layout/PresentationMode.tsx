@@ -15,7 +15,7 @@ interface Props {
 // stories with the neutral Left/Center/Right read, a live clock, and an alert ticker.
 export function PresentationMode({ events, feintcon, onExit }: Props) {
   const stories = useMemo(
-    () => events.filter((e) => !e.is_duplicate).sort((a, b) => b.signal_score - a.signal_score).slice(0, 10),
+    () => events.filter((e) => !e.is_duplicate).sort((a, b) => b.signal_score - a.signal_score).slice(0, 15),
     [events]
   );
   const [index, setIndex] = useState(0);
@@ -48,6 +48,25 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
     return () => clearTimeout(t);
   }, [index, paused, stories.length]);
 
+  // Generate (and cache) the AI Left/Center/Right analysis for one story.
+  async function ensurePerspective(id: string): Promise<PerspectiveAnalysis | null> {
+    const cached = cache.current.get(id);
+    if (cached) return cached;
+    try {
+      const res = await api.generatePerspective(id);
+      cache.current.set(id, res.perspective);
+      return res.perspective;
+    } catch {
+      try {
+        const p = await api.perspective(id);
+        cache.current.set(id, p);
+        return p;
+      } catch {
+        return null;
+      }
+    }
+  }
+
   useEffect(() => {
     if (!current) {
       setPersp(null);
@@ -62,23 +81,34 @@ export function PresentationMode({ events, feintcon, onExit }: Props) {
     setPersp(null);
     setPerspLoading(true);
     let active = true;
-    api
-      .perspective(current.id)
-      .then((p) => {
-        if (!active) return;
-        cache.current.set(current.id, p);
-        setPersp(p);
-        setPerspLoading(false);
-      })
-      .catch(() => {
-        if (!active) return;
-        setPersp(null);
-        setPerspLoading(false);
-      });
+    ensurePerspective(current.id).then((p) => {
+      if (!active) return;
+      setPersp(p);
+      setPerspLoading(false);
+    });
     return () => {
       active = false;
     };
   }, [current?.id]);
+
+  // Prefetch the next story's analysis so the rotation is instant.
+  useEffect(() => {
+    if (stories.length < 2) return;
+    const upcoming = stories[(index + 1) % stories.length];
+    if (upcoming && !cache.current.has(upcoming.id)) {
+      void ensurePerspective(upcoming.id);
+    }
+  }, [index, stories]);
+
+  // Restart the rotation from the top whenever a new cycle changes the story set.
+  const storySig = useMemo(() => stories.map((s) => s.id).join("|"), [stories]);
+  const prevSig = useRef(storySig);
+  useEffect(() => {
+    if (prevSig.current !== storySig) {
+      prevSig.current = storySig;
+      setIndex(0);
+    }
+  }, [storySig]);
 
   // Column text: show loading only while fetching; otherwise fall back to the
   // event's own framing, then a neutral default — never a stuck "Loading…".
